@@ -80,6 +80,9 @@ async function setup(req, res, next) {
         razaoSocial: certInfo.razaoSocial,
         validade: certInfo.validade,
         issuer: certInfo.issuer,
+        // Timestamps em UTC (ISO 8601) - best practice para APIs
+        // A conversão para timezone local deve ser feita no frontend
+        // Ver docs/TIMESTAMP-BEST-PRACTICES.md para mais informações
         criadoEm: new Date().toISOString(),
         atualizadoEm: new Date().toISOString(),
       },
@@ -199,6 +202,7 @@ async function updateCertificate(req, res, next) {
     accountData.metadata.razaoSocial = certInfo.razaoSocial;
     accountData.metadata.validade = certInfo.validade;
     accountData.metadata.issuer = certInfo.issuer;
+    // Timestamp em UTC - mantém consistência independente do timezone do servidor
     accountData.metadata.atualizadoEm = new Date().toISOString();
     
     // Save updated data

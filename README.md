@@ -2,6 +2,8 @@
 
 API middleware para emissão simplificada de documentos fiscais eletrônicos brasileiros (NF-e, NFS-e, CT-e, MDF-e).
 
+> 🤖 **Vibe Coding**: Este projeto está sendo construído com 100% de Inteligência Artificial ✨
+
 ## 📋 Características
 
 - ✅ **API REST** com JSON simplificado
@@ -145,6 +147,11 @@ O servidor estará disponível em `http://localhost:3000`
 - Helmet configurado para proteção contra vulnerabilidades comuns
 - CORS configurável para permitir apenas origens específicas
 
+### Timestamps e Timezones
+- Todos os timestamps são armazenados em **UTC (ISO 8601)**
+- A conversão para timezone local deve ser feita no frontend/cliente
+- Ver [docs/TIMESTAMP-BEST-PRACTICES.md](docs/TIMESTAMP-BEST-PRACTICES.md) para detalhes
+
 ## 📚 API Endpoints
 
 ### Health Check
@@ -218,6 +225,11 @@ Consulta informações da conta e certificado
       "criadaEm": "2026-02-17T10:00:00.000Z",
       "atualizadaEm": "2026-02-17T10:00:00.000Z"
     }
+  }
+}
+```
+
+**Nota sobre timestamps:** Todos os campos de data/hora (`criadaEm`, `atualizadaEm`, `validade`) estão em formato UTC (ISO 8601). O sufixo `Z` indica UTC. Para exibir em horário local, converta no frontend. Ver [documentação sobre timestamps](docs/TIMESTAMP-BEST-PRACTICES.md).
   }
 }
 ```
