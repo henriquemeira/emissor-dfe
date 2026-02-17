@@ -54,8 +54,8 @@ const date = new Date(timestamp);
 console.log(date.toLocaleString('pt-BR', { 
   timeZone: 'America/Sao_Paulo' 
 }));
-// Saída: "17/02/2026, 11:30:00" (UTC-3 no horário de verão)
-// ou: "17/02/2026, 12:30:00" (UTC-2 fora do horário de verão)
+// Saída: "17/02/2026, 11:30:00" (UTC-3 - horário padrão do Brasil desde 2019)
+// Nota: Quando havia horário de verão (até 2019), era UTC-2 durante o verão
 ```
 
 ## Recomendação: Manter UTC
@@ -136,12 +136,12 @@ function DataHora({ timestamp }) {
 
 O Brasil possui 4 fusos horários:
 
-| Timezone | Estados | UTC Offset (Padrão) | UTC Offset (Verão) |
+| Timezone | Estados | UTC Offset (Atual) | UTC Offset (Verão - até 2019) |
 |----------|---------|---------------------|---------------------|
-| America/Sao_Paulo | SP, RJ, MG, etc. | UTC-3 | UTC-2 |
-| America/Manaus | AM, RR, RO, etc. | UTC-4 | UTC-4 |
-| America/Fortaleza | CE, MA, PI, etc. | UTC-3 | UTC-3 |
-| America/Noronha | Fernando de Noronha | UTC-2 | UTC-2 |
+| America/Sao_Paulo | SP, RJ, MG, etc. | UTC-3 | UTC-2 (histórico) |
+| America/Manaus | AM, RR, RO, etc. | UTC-4 | UTC-4 (sem horário de verão) |
+| America/Fortaleza | CE, MA, PI, etc. | UTC-3 | UTC-3 (sem horário de verão) |
+| America/Noronha | Fernando de Noronha | UTC-2 | UTC-2 (sem horário de verão) |
 
 **Nota**: O horário de verão foi abolido no Brasil em 2019, mas o suporte permanece no timezone database para dados históricos.
 
