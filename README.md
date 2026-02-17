@@ -458,15 +458,17 @@ Contribuições são bem-vindas! Por favor:
 ## 📝 Roadmap
 
 - [x] **Fase 1 (MVP)** - Gestão de contas e certificados
-- [ ] **Fase 2** - Implementação completa de NF-e
+- [ ] **Fase 2** NFS-e (Nota Fiscal de Serviço Eletrônica)
+  - [ ] Emissão de RPS do Município de São Paulo / SP
+- [ ] **Fase 3** - Implementação completa de NF-e
   - [ ] Emissão de NF-e
   - [ ] Cancelamento de NF-e
   - [ ] Consulta de NF-e
   - [ ] Inutilização de numeração
-- [ ] **Fase 3** - Outros documentos fiscais
+- [ ] **Fase 4** - Outros documentos fiscais
   - [ ] CT-e (Conhecimento de Transporte Eletrônico)
   - [ ] MDF-e (Manifesto Eletrônico de Documentos Fiscais)
-  - [ ] NFS-e (Nota Fiscal de Serviço Eletrônica)
+
 - [ ] **Futuro**
   - [ ] Webhooks para notificações
   - [ ] Dashboard web
