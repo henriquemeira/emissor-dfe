@@ -1,454 +1,453 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta name="viewport" content="width=device-width" /><title>https://nfews.prefeitura.sp.gov.br/lotenfe.asmx?WSDL</title><link rel="stylesheet" type="text/css" href="resource://content-accessible/viewsource.css" /></head><body id="viewsource" style="tab-size: 4"><span id="line1"><span></span><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span><span>
-</span></span><span id="line2"><span></span><span>&lt;<span class="start-tag">wsdl:definitions</span> <span class="attribute-name">xmlns:s</span>="<a class="attribute-value">http://www.w3.org/2001/XMLSchema</a>" <span class="attribute-name">xmlns:soap12</span>="<a class="attribute-value">http://schemas.xmlsoap.org/wsdl/soap12/</a>" <span class="attribute-name">xmlns:http</span>="<a class="attribute-value">http://schemas.xmlsoap.org/wsdl/http/</a>" <span class="attribute-name">xmlns:mime</span>="<a class="attribute-value">http://schemas.xmlsoap.org/wsdl/mime/</a>" <span class="attribute-name">xmlns:tns</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe</a>" <span class="attribute-name">xmlns:soap</span>="<a class="attribute-value">http://schemas.xmlsoap.org/wsdl/soap/</a>" <span class="attribute-name">xmlns:tm</span>="<a class="attribute-value">http://microsoft.com/wsdl/mime/textMatching/</a>" <span class="attribute-name">xmlns:soapenc</span>="<a class="attribute-value">http://schemas.xmlsoap.org/soap/encoding/</a>" <span class="attribute-name">targetNamespace</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe</a>" <span class="attribute-name">xmlns:wsdl</span>="<a class="attribute-value">http://schemas.xmlsoap.org/wsdl/</a>"&gt;</span><span>
-</span></span><span id="line3"><span>  </span><span>&lt;<span class="start-tag">wsdl:types</span>&gt;</span><span>
-</span></span><span id="line4"><span>    </span><span>&lt;<span class="start-tag">s:schema</span> <span class="attribute-name">elementFormDefault</span>="<a class="attribute-value">qualified</a>" <span class="attribute-name">targetNamespace</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe</a>"&gt;</span><span>
-</span></span><span id="line5"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioRPSRequest</a>"&gt;</span><span>
-</span></span><span id="line6"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line7"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line8"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line9"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line10"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line11"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line12"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line13"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioRPSResponse</a>"&gt;</span><span>
-</span></span><span id="line14"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line15"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line16"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line17"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line18"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line19"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line20"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioLoteRPSRequest</a>"&gt;</span><span>
-</span></span><span id="line21"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line22"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line23"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line24"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line25"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line26"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line27"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line28"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioLoteRPSResponse</a>"&gt;</span><span>
-</span></span><span id="line29"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line30"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line31"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line32"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line33"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line34"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line35"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">TesteEnvioLoteRPSRequest</a>"&gt;</span><span>
-</span></span><span id="line36"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line37"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line38"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line39"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line40"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line41"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line42"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line43"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">TesteEnvioLoteRPSResponse</a>"&gt;</span><span>
-</span></span><span id="line44"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line45"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line46"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line47"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line48"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line49"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line50"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">CancelamentoNFeRequest</a>"&gt;</span><span>
-</span></span><span id="line51"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line52"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line53"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line54"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line55"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line56"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line57"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line58"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">CancelamentoNFeResponse</a>"&gt;</span><span>
-</span></span><span id="line59"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line60"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line61"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line62"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line63"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line64"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line65"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeRequest</a>"&gt;</span><span>
-</span></span><span id="line66"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line67"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line68"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line69"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line70"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line71"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line72"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line73"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeResponse</a>"&gt;</span><span>
-</span></span><span id="line74"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line75"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line76"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line77"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line78"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line79"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line80"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeRecebidasRequest</a>"&gt;</span><span>
-</span></span><span id="line81"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line82"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line83"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line84"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line85"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line86"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line87"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line88"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeRecebidasResponse</a>"&gt;</span><span>
-</span></span><span id="line89"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line90"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line91"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line92"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line93"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line94"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line95"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeEmitidasRequest</a>"&gt;</span><span>
-</span></span><span id="line96"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line97"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line98"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line99"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line100"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line101"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line102"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line103"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeEmitidasResponse</a>"&gt;</span><span>
-</span></span><span id="line104"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line105"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line106"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line107"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line108"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line109"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line110"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaLoteRequest</a>"&gt;</span><span>
-</span></span><span id="line111"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line112"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line113"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line114"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line115"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line116"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line117"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line118"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaLoteResponse</a>"&gt;</span><span>
-</span></span><span id="line119"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line120"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line121"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line122"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line123"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line124"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line125"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaInformacoesLoteRequest</a>"&gt;</span><span>
-</span></span><span id="line126"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line127"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line128"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line129"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line130"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line131"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line132"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line133"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaInformacoesLoteResponse</a>"&gt;</span><span>
-</span></span><span id="line134"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line135"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line136"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line137"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line138"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line139"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line140"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaCNPJRequest</a>"&gt;</span><span>
-</span></span><span id="line141"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line142"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line143"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">VersaoSchema</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:int</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line144"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">MensagemXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line145"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line146"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line147"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line148"><span>      </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaCNPJResponse</a>"&gt;</span><span>
-</span></span><span id="line149"><span>        </span><span>&lt;<span class="start-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line150"><span>          </span><span>&lt;<span class="start-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line151"><span>            </span><span>&lt;<span class="start-tag">s:element</span> <span class="attribute-name">minOccurs</span>="<a class="attribute-value">0</a>" <span class="attribute-name">maxOccurs</span>="<a class="attribute-value">1</a>" <span class="attribute-name">name</span>="<a class="attribute-value">RetornoXML</a>" <span class="attribute-name">type</span>="<a class="attribute-value">s:string</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line152"><span>          </span><span>&lt;/<span class="end-tag">s:sequence</span>&gt;</span><span>
-</span></span><span id="line153"><span>        </span><span>&lt;/<span class="end-tag">s:complexType</span>&gt;</span><span>
-</span></span><span id="line154"><span>      </span><span>&lt;/<span class="end-tag">s:element</span>&gt;</span><span>
-</span></span><span id="line155"><span>    </span><span>&lt;/<span class="end-tag">s:schema</span>&gt;</span><span>
-</span></span><span id="line156"><span>  </span><span>&lt;/<span class="end-tag">wsdl:types</span>&gt;</span><span>
-</span></span><span id="line157"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioRPSSoapIn</a>"&gt;</span><span>
-</span></span><span id="line158"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:EnvioRPSRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line159"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line160"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioRPSSoapOut</a>"&gt;</span><span>
-</span></span><span id="line161"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:EnvioRPSResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line162"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line163"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioLoteRPSSoapIn</a>"&gt;</span><span>
-</span></span><span id="line164"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:EnvioLoteRPSRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line165"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line166"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioLoteRPSSoapOut</a>"&gt;</span><span>
-</span></span><span id="line167"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:EnvioLoteRPSResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line168"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line169"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">TesteEnvioLoteRPSSoapIn</a>"&gt;</span><span>
-</span></span><span id="line170"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:TesteEnvioLoteRPSRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line171"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line172"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">TesteEnvioLoteRPSSoapOut</a>"&gt;</span><span>
-</span></span><span id="line173"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:TesteEnvioLoteRPSResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line174"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line175"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">CancelamentoNFeSoapIn</a>"&gt;</span><span>
-</span></span><span id="line176"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:CancelamentoNFeRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line177"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line178"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">CancelamentoNFeSoapOut</a>"&gt;</span><span>
-</span></span><span id="line179"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:CancelamentoNFeResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line180"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line181"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeSoapIn</a>"&gt;</span><span>
-</span></span><span id="line182"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaNFeRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line183"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line184"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeSoapOut</a>"&gt;</span><span>
-</span></span><span id="line185"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaNFeResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line186"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line187"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeRecebidasSoapIn</a>"&gt;</span><span>
-</span></span><span id="line188"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaNFeRecebidasRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line189"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line190"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeRecebidasSoapOut</a>"&gt;</span><span>
-</span></span><span id="line191"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaNFeRecebidasResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line192"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line193"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeEmitidasSoapIn</a>"&gt;</span><span>
-</span></span><span id="line194"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaNFeEmitidasRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line195"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line196"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeEmitidasSoapOut</a>"&gt;</span><span>
-</span></span><span id="line197"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaNFeEmitidasResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line198"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line199"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaLoteSoapIn</a>"&gt;</span><span>
-</span></span><span id="line200"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaLoteRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line201"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line202"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaLoteSoapOut</a>"&gt;</span><span>
-</span></span><span id="line203"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaLoteResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line204"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line205"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaInformacoesLoteSoapIn</a>"&gt;</span><span>
-</span></span><span id="line206"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaInformacoesLoteRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line207"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line208"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaInformacoesLoteSoapOut</a>"&gt;</span><span>
-</span></span><span id="line209"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaInformacoesLoteResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line210"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line211"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaCNPJSoapIn</a>"&gt;</span><span>
-</span></span><span id="line212"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaCNPJRequest</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line213"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line214"><span>  </span><span>&lt;<span class="start-tag">wsdl:message</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaCNPJSoapOut</a>"&gt;</span><span>
-</span></span><span id="line215"><span>    </span><span>&lt;<span class="start-tag">wsdl:part</span> <span class="attribute-name">name</span>="<a class="attribute-value">parameters</a>" <span class="attribute-name">element</span>="<a class="attribute-value">tns:ConsultaCNPJResponse</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line216"><span>  </span><span>&lt;/<span class="end-tag">wsdl:message</span>&gt;</span><span>
-</span></span><span id="line217"><span>  </span><span>&lt;<span class="start-tag">wsdl:portType</span> <span class="attribute-name">name</span>="<a class="attribute-value">LoteNFeSoap</a>"&gt;</span><span>
-</span></span><span id="line218"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioRPS</a>"&gt;</span><span>
-</span></span><span id="line219"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:EnvioRPSSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line220"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:EnvioRPSSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line221"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line222"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioLoteRPS</a>"&gt;</span><span>
-</span></span><span id="line223"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:EnvioLoteRPSSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line224"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:EnvioLoteRPSSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line225"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line226"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">TesteEnvioLoteRPS</a>"&gt;</span><span>
-</span></span><span id="line227"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:TesteEnvioLoteRPSSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line228"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:TesteEnvioLoteRPSSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line229"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line230"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">CancelamentoNFe</a>"&gt;</span><span>
-</span></span><span id="line231"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:CancelamentoNFeSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line232"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:CancelamentoNFeSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line233"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line234"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFe</a>"&gt;</span><span>
-</span></span><span id="line235"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaNFeSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line236"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaNFeSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line237"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line238"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeRecebidas</a>"&gt;</span><span>
-</span></span><span id="line239"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaNFeRecebidasSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line240"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaNFeRecebidasSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line241"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line242"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeEmitidas</a>"&gt;</span><span>
-</span></span><span id="line243"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaNFeEmitidasSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line244"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaNFeEmitidasSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line245"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line246"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaLote</a>"&gt;</span><span>
-</span></span><span id="line247"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaLoteSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line248"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaLoteSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line249"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line250"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaInformacoesLote</a>"&gt;</span><span>
-</span></span><span id="line251"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaInformacoesLoteSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line252"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaInformacoesLoteSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line253"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line254"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaCNPJ</a>"&gt;</span><span>
-</span></span><span id="line255"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaCNPJSoapIn</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line256"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span> <span class="attribute-name">message</span>="<a class="attribute-value">tns:ConsultaCNPJSoapOut</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line257"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line258"><span>  </span><span>&lt;/<span class="end-tag">wsdl:portType</span>&gt;</span><span>
-</span></span><span id="line259"><span>  </span><span>&lt;<span class="start-tag">wsdl:binding</span> <span class="attribute-name">name</span>="<a class="attribute-value">LoteNFeSoap</a>" <span class="attribute-name">type</span>="<a class="attribute-value">tns:LoteNFeSoap</a>"&gt;</span><span>
-</span></span><span id="line260"><span>    </span><span>&lt;<span class="start-tag">soap:binding</span> <span class="attribute-name">transport</span>="<a class="attribute-value">http://schemas.xmlsoap.org/soap/http</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line261"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioRPS</a>"&gt;</span><span>
-</span></span><span id="line262"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/envioRPS</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line263"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line264"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line265"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line266"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line267"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line268"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line269"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line270"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioLoteRPS</a>"&gt;</span><span>
-</span></span><span id="line271"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/envioLoteRPS</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line272"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line273"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line274"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line275"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line276"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line277"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line278"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line279"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">TesteEnvioLoteRPS</a>"&gt;</span><span>
-</span></span><span id="line280"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/testeenvio</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line281"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line282"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line283"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line284"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line285"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line286"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line287"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line288"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">CancelamentoNFe</a>"&gt;</span><span>
-</span></span><span id="line289"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/cancelamentoNFe</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line290"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line291"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line292"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line293"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line294"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line295"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line296"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line297"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFe</a>"&gt;</span><span>
-</span></span><span id="line298"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFe</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line299"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line300"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line301"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line302"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line303"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line304"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line305"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line306"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeRecebidas</a>"&gt;</span><span>
-</span></span><span id="line307"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFeRecebidas</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line308"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line309"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line310"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line311"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line312"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line313"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line314"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line315"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeEmitidas</a>"&gt;</span><span>
-</span></span><span id="line316"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFeEmitidas</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line317"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line318"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line319"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line320"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line321"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line322"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line323"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line324"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaLote</a>"&gt;</span><span>
-</span></span><span id="line325"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaLote</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line326"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line327"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line328"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line329"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line330"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line331"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line332"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line333"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaInformacoesLote</a>"&gt;</span><span>
-</span></span><span id="line334"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaInformacoesLote</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line335"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line336"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line337"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line338"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line339"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line340"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line341"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line342"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaCNPJ</a>"&gt;</span><span>
-</span></span><span id="line343"><span>      </span><span>&lt;<span class="start-tag">soap:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaCNPJ</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line344"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line345"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line346"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line347"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line348"><span>        </span><span>&lt;<span class="start-tag">soap:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line349"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line350"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line351"><span>  </span><span>&lt;/<span class="end-tag">wsdl:binding</span>&gt;</span><span>
-</span></span><span id="line352"><span>  </span><span>&lt;<span class="start-tag">wsdl:binding</span> <span class="attribute-name">name</span>="<a class="attribute-value">LoteNFeSoap12</a>" <span class="attribute-name">type</span>="<a class="attribute-value">tns:LoteNFeSoap</a>"&gt;</span><span>
-</span></span><span id="line353"><span>    </span><span>&lt;<span class="start-tag">soap12:binding</span> <span class="attribute-name">transport</span>="<a class="attribute-value">http://schemas.xmlsoap.org/soap/http</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line354"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioRPS</a>"&gt;</span><span>
-</span></span><span id="line355"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/envioRPS</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line356"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line357"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line358"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line359"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line360"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line361"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line362"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line363"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">EnvioLoteRPS</a>"&gt;</span><span>
-</span></span><span id="line364"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/envioLoteRPS</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line365"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line366"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line367"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line368"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line369"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line370"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line371"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line372"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">TesteEnvioLoteRPS</a>"&gt;</span><span>
-</span></span><span id="line373"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/testeenvio</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line374"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line375"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line376"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line377"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line378"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line379"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line380"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line381"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">CancelamentoNFe</a>"&gt;</span><span>
-</span></span><span id="line382"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/cancelamentoNFe</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line383"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line384"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line385"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line386"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line387"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line388"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line389"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line390"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFe</a>"&gt;</span><span>
-</span></span><span id="line391"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFe</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line392"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line393"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line394"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line395"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line396"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line397"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line398"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line399"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeRecebidas</a>"&gt;</span><span>
-</span></span><span id="line400"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFeRecebidas</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line401"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line402"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line403"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line404"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line405"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line406"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line407"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line408"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaNFeEmitidas</a>"&gt;</span><span>
-</span></span><span id="line409"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFeEmitidas</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line410"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line411"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line412"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line413"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line414"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line415"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line416"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line417"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaLote</a>"&gt;</span><span>
-</span></span><span id="line418"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaLote</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line419"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line420"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line421"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line422"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line423"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line424"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line425"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line426"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaInformacoesLote</a>"&gt;</span><span>
-</span></span><span id="line427"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaInformacoesLote</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line428"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line429"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line430"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line431"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line432"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line433"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line434"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line435"><span>    </span><span>&lt;<span class="start-tag">wsdl:operation</span> <span class="attribute-name">name</span>="<a class="attribute-value">ConsultaCNPJ</a>"&gt;</span><span>
-</span></span><span id="line436"><span>      </span><span>&lt;<span class="start-tag">soap12:operation</span> <span class="attribute-name">soapAction</span>="<a class="attribute-value">http://www.prefeitura.sp.gov.br/nfe/ws/consultaCNPJ</a>" <span class="attribute-name">style</span>="<a class="attribute-value">document</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line437"><span>      </span><span>&lt;<span class="start-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line438"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line439"><span>      </span><span>&lt;/<span class="end-tag">wsdl:input</span>&gt;</span><span>
-</span></span><span id="line440"><span>      </span><span>&lt;<span class="start-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line441"><span>        </span><span>&lt;<span class="start-tag">soap12:body</span> <span class="attribute-name">use</span>="<a class="attribute-value">literal</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line442"><span>      </span><span>&lt;/<span class="end-tag">wsdl:output</span>&gt;</span><span>
-</span></span><span id="line443"><span>    </span><span>&lt;/<span class="end-tag">wsdl:operation</span>&gt;</span><span>
-</span></span><span id="line444"><span>  </span><span>&lt;/<span class="end-tag">wsdl:binding</span>&gt;</span><span>
-</span></span><span id="line445"><span>  </span><span>&lt;<span class="start-tag">wsdl:service</span> <span class="attribute-name">name</span>="<a class="attribute-value">LoteNFe</a>"&gt;</span><span>
-</span></span><span id="line446"><span>    </span><span>&lt;<span class="start-tag">wsdl:port</span> <span class="attribute-name">name</span>="<a class="attribute-value">LoteNFeSoap</a>" <span class="attribute-name">binding</span>="<a class="attribute-value">tns:LoteNFeSoap</a>"&gt;</span><span>
-</span></span><span id="line447"><span>      </span><span>&lt;<span class="start-tag">soap:address</span> <span class="attribute-name">location</span>="<a class="attribute-value">https://nfews.prefeitura.sp.gov.br/lotenfe.asmx</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line448"><span>    </span><span>&lt;/<span class="end-tag">wsdl:port</span>&gt;</span><span>
-</span></span><span id="line449"><span>    </span><span>&lt;<span class="start-tag">wsdl:port</span> <span class="attribute-name">name</span>="<a class="attribute-value">LoteNFeSoap12</a>" <span class="attribute-name">binding</span>="<a class="attribute-value">tns:LoteNFeSoap12</a>"&gt;</span><span>
-</span></span><span id="line450"><span>      </span><span>&lt;<span class="start-tag">soap12:address</span> <span class="attribute-name">location</span>="<a class="attribute-value">https://nfews.prefeitura.sp.gov.br/lotenfe.asmx</a>" <span>/</span>&gt;</span><span>
-</span></span><span id="line451"><span>    </span><span>&lt;/<span class="end-tag">wsdl:port</span>&gt;</span><span>
-</span></span><span id="line452"><span>  </span><span>&lt;/<span class="end-tag">wsdl:service</span>&gt;</span><span>
-</span></span><span id="line453"><span></span><span>&lt;/<span class="end-tag">wsdl:definitions</span>&gt;</span><span></span></span></body></html>
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.prefeitura.sp.gov.br/nfe" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://www.prefeitura.sp.gov.br/nfe" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.prefeitura.sp.gov.br/nfe">
+      <s:element name="EnvioRPSRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EnvioRPSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EnvioLoteRPSRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="EnvioLoteRPSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TesteEnvioLoteRPSRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="TesteEnvioLoteRPSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelamentoNFeRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CancelamentoNFeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaNFeRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaNFeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaNFeRecebidasRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaNFeRecebidasResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaNFeEmitidasRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaNFeEmitidasResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaLoteRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaLoteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaInformacoesLoteRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaInformacoesLoteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaCNPJRequest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VersaoSchema" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="MensagemXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConsultaCNPJResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="RetornoXML" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="EnvioRPSSoapIn">
+    <wsdl:part name="parameters" element="tns:EnvioRPSRequest" />
+  </wsdl:message>
+  <wsdl:message name="EnvioRPSSoapOut">
+    <wsdl:part name="parameters" element="tns:EnvioRPSResponse" />
+  </wsdl:message>
+  <wsdl:message name="EnvioLoteRPSSoapIn">
+    <wsdl:part name="parameters" element="tns:EnvioLoteRPSRequest" />
+  </wsdl:message>
+  <wsdl:message name="EnvioLoteRPSSoapOut">
+    <wsdl:part name="parameters" element="tns:EnvioLoteRPSResponse" />
+  </wsdl:message>
+  <wsdl:message name="TesteEnvioLoteRPSSoapIn">
+    <wsdl:part name="parameters" element="tns:TesteEnvioLoteRPSRequest" />
+  </wsdl:message>
+  <wsdl:message name="TesteEnvioLoteRPSSoapOut">
+    <wsdl:part name="parameters" element="tns:TesteEnvioLoteRPSResponse" />
+  </wsdl:message>
+  <wsdl:message name="CancelamentoNFeSoapIn">
+    <wsdl:part name="parameters" element="tns:CancelamentoNFeRequest" />
+  </wsdl:message>
+  <wsdl:message name="CancelamentoNFeSoapOut">
+    <wsdl:part name="parameters" element="tns:CancelamentoNFeResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaNFeSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultaNFeRequest" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaNFeSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultaNFeResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaNFeRecebidasSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultaNFeRecebidasRequest" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaNFeRecebidasSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultaNFeRecebidasResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaNFeEmitidasSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultaNFeEmitidasRequest" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaNFeEmitidasSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultaNFeEmitidasResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaLoteSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultaLoteRequest" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaLoteSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultaLoteResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaInformacoesLoteSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultaInformacoesLoteRequest" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaInformacoesLoteSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultaInformacoesLoteResponse" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaCNPJSoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultaCNPJRequest" />
+  </wsdl:message>
+  <wsdl:message name="ConsultaCNPJSoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultaCNPJResponse" />
+  </wsdl:message>
+  <wsdl:portType name="LoteNFeSoap">
+    <wsdl:operation name="EnvioRPS">
+      <wsdl:input message="tns:EnvioRPSSoapIn" />
+      <wsdl:output message="tns:EnvioRPSSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="EnvioLoteRPS">
+      <wsdl:input message="tns:EnvioLoteRPSSoapIn" />
+      <wsdl:output message="tns:EnvioLoteRPSSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="TesteEnvioLoteRPS">
+      <wsdl:input message="tns:TesteEnvioLoteRPSSoapIn" />
+      <wsdl:output message="tns:TesteEnvioLoteRPSSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CancelamentoNFe">
+      <wsdl:input message="tns:CancelamentoNFeSoapIn" />
+      <wsdl:output message="tns:CancelamentoNFeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaNFe">
+      <wsdl:input message="tns:ConsultaNFeSoapIn" />
+      <wsdl:output message="tns:ConsultaNFeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaNFeRecebidas">
+      <wsdl:input message="tns:ConsultaNFeRecebidasSoapIn" />
+      <wsdl:output message="tns:ConsultaNFeRecebidasSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaNFeEmitidas">
+      <wsdl:input message="tns:ConsultaNFeEmitidasSoapIn" />
+      <wsdl:output message="tns:ConsultaNFeEmitidasSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaLote">
+      <wsdl:input message="tns:ConsultaLoteSoapIn" />
+      <wsdl:output message="tns:ConsultaLoteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaInformacoesLote">
+      <wsdl:input message="tns:ConsultaInformacoesLoteSoapIn" />
+      <wsdl:output message="tns:ConsultaInformacoesLoteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCNPJ">
+      <wsdl:input message="tns:ConsultaCNPJSoapIn" />
+      <wsdl:output message="tns:ConsultaCNPJSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="LoteNFeSoap" type="tns:LoteNFeSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="EnvioRPS">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/envioRPS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnvioLoteRPS">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/envioLoteRPS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TesteEnvioLoteRPS">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/testeenvio" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelamentoNFe">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/cancelamentoNFe" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaNFe">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFe" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaNFeRecebidas">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFeRecebidas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaNFeEmitidas">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFeEmitidas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaLote">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaLote" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaInformacoesLote">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaInformacoesLote" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCNPJ">
+      <soap:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaCNPJ" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="LoteNFeSoap12" type="tns:LoteNFeSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="EnvioRPS">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/envioRPS" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="EnvioLoteRPS">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/envioLoteRPS" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="TesteEnvioLoteRPS">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/testeenvio" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CancelamentoNFe">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/cancelamentoNFe" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaNFe">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFe" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaNFeRecebidas">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFeRecebidas" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaNFeEmitidas">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaNFeEmitidas" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaLote">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaLote" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaInformacoesLote">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaInformacoesLote" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ConsultaCNPJ">
+      <soap12:operation soapAction="http://www.prefeitura.sp.gov.br/nfe/ws/consultaCNPJ" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="LoteNFe">
+    <wsdl:port name="LoteNFeSoap" binding="tns:LoteNFeSoap">
+      <soap:address location="https://nfews.prefeitura.sp.gov.br/lotenfe.asmx" />
+    </wsdl:port>
+    <wsdl:port name="LoteNFeSoap12" binding="tns:LoteNFeSoap12">
+      <soap12:address location="https://nfews.prefeitura.sp.gov.br/lotenfe.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
