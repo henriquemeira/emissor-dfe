@@ -99,8 +99,9 @@ function extractCNPJ(certificate) {
   const altNames = certificate.getExtension({ name: 'subjectAltName' });
   if (altNames && altNames.altNames) {
     for (const altName of altNames.altNames) {
-      if (altName.value) {
-        const cnpj = altName.value.replace(/\D/g, '');
+      const candidates = getAltNameValueCandidates(altName);
+      for (const candidate of candidates) {
+        const cnpj = candidate.replace(/\D/g, '');
         if (cnpj.length === 14) {
           return cnpj;
         }
@@ -118,6 +119,48 @@ function extractCNPJ(certificate) {
   }
   
   return null;
+}
+
+function getAltNameValueCandidates(altName) {
+  const candidates = [];
+  if (!altName || !altName.value) return candidates;
+
+  if (typeof altName.value === 'string') {
+    candidates.push(altName.value);
+    return candidates;
+  }
+
+  if (Buffer.isBuffer(altName.value)) {
+    candidates.push(altName.value.toString('utf8'));
+    return candidates;
+  }
+
+  if (altName.value && typeof altName.value === 'object') {
+    if (typeof altName.value.value === 'string') {
+      candidates.push(altName.value.value);
+    }
+
+    if (Array.isArray(altName.value.value)) {
+      for (const item of altName.value.value) {
+        if (typeof item === 'string') {
+          candidates.push(item);
+        } else if (item && typeof item.value === 'string') {
+          candidates.push(item.value);
+        }
+      }
+    }
+
+    if (altName.value.type !== undefined && altName.value.value !== undefined) {
+      try {
+        const derBytes = forge.asn1.toDer(altName.value).getBytes();
+        candidates.push(Buffer.from(derBytes, 'binary').toString('utf8'));
+      } catch (error) {
+        // Ignore ASN.1 conversion errors and fall back to other candidates.
+      }
+    }
+  }
+
+  return candidates;
 }
 
 /**
