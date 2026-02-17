@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo: Timestamps UTC → Horário Local</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .example {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+        }
+        .example h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .code {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        .result {
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .utc {
+            color: #1976D2;
+            font-weight: bold;
+        }
+        .local {
+            color: #388E3C;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Timestamps UTC → Horário Local do Brasil</h1>
+        
+        <p>Esta página demonstra como a API Emissor DFe retorna timestamps em <strong>UTC</strong> e como convertê-los para o horário local do usuário.</p>
+
+        <div class="note">
+            <strong>📌 Importante:</strong> A API sempre retorna timestamps em UTC (ISO 8601). 
+            A conversão para horário local deve ser feita no frontend, permitindo que cada usuário 
+            veja as datas em seu próprio timezone.
+        </div>
+
+        <div class="example">
+            <h3>1. Exemplo de Resposta da API</h3>
+            <div class="code">
+{
+  "success": true,
+  "data": {
+    "conta": {
+      "criadaEm": "<span class="utc">2026-02-17T14:30:00.000Z</span>",
+      "atualizadaEm": "<span class="utc">2026-02-17T14:30:00.000Z</span>"
+    }
+  }
+}
+            </div>
+            <p>O <code>Z</code> no final indica que o timestamp está em <strong>UTC (Zero timezone)</strong>.</p>
+        </div>
+
+        <div class="example">
+            <h3>2. Conversão Automática no JavaScript</h3>
+            <div class="code">
+// Timestamp UTC da API
+const timestampUTC = "2026-02-17T14:30:00.000Z";
+
+// Converter para horário local do Brasil
+const date = new Date(timestampUTC);
+const horarioBrasilia = date.toLocaleString('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    dateStyle: 'short',
+    timeStyle: 'medium'
+});
+
+console.log(horarioBrasilia);
+// Saída: "<span class="local">17/02/2026, 11:30:00</span>"
+            </div>
+        </div>
+
+        <div class="example">
+            <h3>3. Demonstração ao Vivo</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>UTC (da API)</th>
+                        <th>Horário de Brasília</th>
+                        <th>Seu Horário Local</th>
+                    </tr>
+                </thead>
+                <tbody id="examples"></tbody>
+            </table>
+        </div>
+
+        <div class="example">
+            <h3>4. Exemplo para React</h3>
+            <div class="code">
+function DataHoraBrasil({ timestamp }) {
+    const formatado = new Date(timestamp).toLocaleString('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    return &lt;span&gt;{formatado}&lt;/span&gt;;
+}
+
+// Uso
+&lt;DataHoraBrasil timestamp={conta.criadaEm} /&gt;
+            </div>
+        </div>
+
+        <div class="example">
+            <h3>5. Timezones do Brasil</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timezone IANA</th>
+                        <th>Regiões</th>
+                        <th>UTC Offset</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>America/Sao_Paulo</td>
+                        <td>SP, RJ, MG, RS, PR, SC, ES, GO, DF, etc.</td>
+                        <td>UTC-3</td>
+                    </tr>
+                    <tr>
+                        <td>America/Manaus</td>
+                        <td>AM, RR, RO, MS, MT, AC</td>
+                        <td>UTC-4</td>
+                    </tr>
+                    <tr>
+                        <td>America/Fortaleza</td>
+                        <td>CE, MA, PI, RN, PB, PE, AL, SE, BA, TO, PA, AP</td>
+                        <td>UTC-3</td>
+                    </tr>
+                    <tr>
+                        <td>America/Noronha</td>
+                        <td>Fernando de Noronha</td>
+                        <td>UTC-2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="note">
+            <strong>💡 Dica:</strong> Use sempre <code>toLocaleString()</code> ou <code>toLocaleDateString()</code> 
+            com o parâmetro <code>timeZone</code> para garantir que a conversão seja feita corretamente, 
+            independente do timezone configurado no navegador do usuário.
+        </div>
+    </div>
+
+    <script>
+        // Exemplos de timestamps para demonstração
+        const exemplos = [
+            {
+                descricao: 'Conta criada',
+                utc: '2026-02-17T14:30:00.000Z'
+            },
+            {
+                descricao: 'Certificado atualizado',
+                utc: '2026-02-17T09:15:30.000Z'
+            },
+            {
+                descricao: 'Último acesso',
+                utc: '2026-02-17T22:45:10.000Z'
+            }
+        ];
+
+        const tbody = document.getElementById('examples');
+        
+        exemplos.forEach(exemplo => {
+            const date = new Date(exemplo.utc);
+            
+            // Horário de Brasília
+            const brasilia = date.toLocaleString('pt-BR', {
+                timeZone: 'America/Sao_Paulo',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            // Horário local do usuário
+            const local = date.toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${exemplo.descricao}</td>
+                <td class="utc">${exemplo.utc}</td>
+                <td class="local">${brasilia}</td>
+                <td>${local}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    </script>
+</body>
+</html>
