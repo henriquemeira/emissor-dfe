@@ -8,8 +8,8 @@ const forge = require('node-forge');
  */
 function validateCertificate(certificateBuffer, password) {
   try {
-    // Convert buffer to binary string for node-forge
-    const p12Der = forge.util.binary.raw.decode(certificateBuffer);
+    // Convert buffer to binary string
+    const p12Der = certificateBuffer.toString('binary');
     
     // Parse PKCS#12
     const p12Asn1 = forge.asn1.fromDer(p12Der);
