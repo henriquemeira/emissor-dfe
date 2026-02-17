@@ -2,6 +2,8 @@
 
 API middleware para emissão simplificada de documentos fiscais eletrônicos brasileiros (NF-e, NFS-e, CT-e, MDF-e).
 
+> 🤖 **Vibe Coding**: Este projeto está sendo construído com 100% de Inteligência Artificial ✨
+
 ## 📋 Características
 
 - ✅ **API REST** com JSON simplificado
