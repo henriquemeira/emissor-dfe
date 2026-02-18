@@ -612,7 +612,7 @@ async function parseSoapResponse(soapXml) {
     }
 
     if (responseConsulta) {
-      return parseRetornoConsultaSituacaoLote(parsedRetorno);
+      return await parseRetornoConsultaSituacaoLote(parsedRetorno);
     }
 
     return parseRetornoEnvioLoteRPSAsync(parsedRetorno);
@@ -853,11 +853,19 @@ function parseRetornoEnvioLoteRPS(retorno) {
   if (root.ChaveNFeRPS) {
     root.ChaveNFeRPS.forEach(chave => {
       const chaveNFeRPS = {
-        inscricaoPrestador: chave.InscricaoPrestador ? chave.InscricaoPrestador[0] : null,
-        numeroNFe: chave.NumeroNFe ? chave.NumeroNFe[0] : null,
-        codigoVerificacao: chave.CodigoVerificacao ? chave.CodigoVerificacao[0] : null,
+        inscricaoPrestador: null,
+        numeroNFe: null,
+        codigoVerificacao: null,
         chaveRPS: null,
       };
+      
+      // Parse ChaveNFe (contains NumeroNFe, CodigoVerificacao, InscricaoPrestador)
+      if (chave.ChaveNFe && chave.ChaveNFe[0]) {
+        const chaveNFe = chave.ChaveNFe[0];
+        chaveNFeRPS.inscricaoPrestador = chaveNFe.InscricaoPrestador ? chaveNFe.InscricaoPrestador[0] : null;
+        chaveNFeRPS.numeroNFe = chaveNFe.NumeroNFe ? chaveNFe.NumeroNFe[0] : null;
+        chaveNFeRPS.codigoVerificacao = chaveNFe.CodigoVerificacao ? chaveNFe.CodigoVerificacao[0] : null;
+      }
       
       // Parse ChaveRPS
       if (chave.ChaveRPS && chave.ChaveRPS[0]) {
@@ -975,11 +983,209 @@ function parseRetornoEnvioRPS(retorno) {
 }
 
 /**
+ * Parse um objeto XML com suporte a diferentes estruturas de namespace
+ * @param {*} obj - Objeto ou array
+ * @param {string} key - Chave a procurar
+ * @returns {*} Valor encontrado ou null
+ */
+function getXmlValue(obj, key) {
+  if (!obj) return null;
+  
+  // Se for array, pega o primeiro elemento
+  if (Array.isArray(obj)) {
+    return getXmlValue(obj[0], key);
+  }
+  
+  // Procura por chave direta
+  if (obj[key]) {
+    return obj[key];
+  }
+  
+  // Procura em objetos com namespace
+  for (const objKey in obj) {
+    if (objKey.endsWith(`:${key}`) || objKey === key) {
+      return obj[objKey];
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Parses the XML content inside ResultadoOperacao
+ * Extracts structured data from the inner XML string
+ * @param {string} resultadoXmlString - XML string content
+ * @returns {Promise<Object>} Structured resultado data with cabecalho, alertas, erros, and chavesNFeRPS
+ */
+async function parseResultadoOperacaoXml(resultadoXmlString) {
+  try {
+    if (!resultadoXmlString) {
+      return null;
+    }
+
+    const parser = new xml2js.Parser({
+      explicitArray: false,
+      ignoreAttrs: false,
+      removeNamespaces: true,
+      tagNameProcessors: [xml2js.processors.stripPrefix],
+    });
+
+    const parsed = await parser.parseStringPromise(resultadoXmlString);
+    
+    logDebug('=== RESULTADO OPERACAO XML PARSEADO ===');
+    logDebug(JSON.stringify(parsed, null, 2));
+    logDebug('=== FIM RESULTADO OPERACAO ===');
+    
+    // Navigate to the root element - tenta diferentes caminhos
+    let root = parsed.RetornoEnvioLoteRPS;
+    if (!root) {
+      root = parsed;
+    }
+
+    logDebug('Root element encontrado:', Object.keys(root || {}));
+
+    const resultado = {
+      cabecalho: null,
+      alertas: [],
+      erros: [],
+      chavesNFeRPS: [],
+    };
+
+    // Parse Cabecalho
+    const cabecalho = getXmlValue(root, 'Cabecalho');
+    if (cabecalho) {
+      const sucesso = getXmlValue(cabecalho, 'Sucesso');
+      const versao = cabecalho.$?.Versao;
+      
+      resultado.cabecalho = {
+        sucesso: sucesso === 'true' || sucesso === true,
+        versao: versao ? parseInt(versao, 10) : null,
+      };
+
+      // Parse InformacoesLote if present
+      const infLote = getXmlValue(cabecalho, 'InformacoesLote');
+      if (infLote) {
+        resultado.cabecalho.informacoesLote = {
+          numeroLote: getXmlValue(infLote, 'NumeroLote'),
+          inscricaoPrestador: getXmlValue(infLote, 'InscricaoPrestador'),
+          cpfCnpjRemetente: null,
+          dataEnvioLote: getXmlValue(infLote, 'DataEnvioLote'),
+          qtdNotasProcessadas: (() => {
+            const val = getXmlValue(infLote, 'QtdNotasProcessadas');
+            return val ? parseInt(val, 10) : null;
+          })(),
+          tempoProcessamento: (() => {
+            const val = getXmlValue(infLote, 'TempoProcessamento');
+            return val ? parseInt(val, 10) : null;
+          })(),
+          valorTotalServicos: (() => {
+            const val = getXmlValue(infLote, 'ValorTotalServicos');
+            return val ? parseFloat(val) : null;
+          })(),
+          valorTotalDeducoes: (() => {
+            const val = getXmlValue(infLote, 'ValorTotalDeducoes');
+            return val ? parseFloat(val) : null;
+          })(),
+        };
+
+        // Parse CPFCNPJRemetente
+        const cpfCnpj = getXmlValue(infLote, 'CPFCNPJRemetente');
+        if (cpfCnpj) {
+          resultado.cabecalho.informacoesLote.cpfCnpjRemetente = {
+            cnpj: getXmlValue(cpfCnpj, 'CNPJ'),
+            cpf: getXmlValue(cpfCnpj, 'CPF'),
+          };
+        }
+      }
+    } else {
+      logDebug('Cabecalho não encontrado');
+    }
+
+    // Parse Alertas (multiple possible)
+    const alertas = getXmlValue(root, 'Alerta');
+    if (alertas) {
+      const alertasArray = Array.isArray(alertas) ? alertas : [alertas];
+      alertasArray.forEach(alerta => {
+        resultado.alertas.push({
+          codigo: getXmlValue(alerta, 'Codigo'),
+          descricao: getXmlValue(alerta, 'Descricao'),
+        });
+      });
+    }
+
+    // Parse Erros (multiple possible)
+    const erros = getXmlValue(root, 'Erro');
+    if (erros) {
+      const errosArray = Array.isArray(erros) ? erros : [erros];
+      errosArray.forEach(erro => {
+        resultado.erros.push({
+          codigo: getXmlValue(erro, 'Codigo'),
+          descricao: getXmlValue(erro, 'Descricao'),
+        });
+      });
+    }
+
+    // Parse ChaveNFeRPS (multiple possible - up to 50)
+    const chaves = getXmlValue(root, 'ChaveNFeRPS');
+    
+    logDebug('ChaveNFeRPS encontrado:', !!chaves);
+    if (chaves) {
+      const chavesArray = Array.isArray(chaves) ? chaves : [chaves];
+      logDebug('Quantidade de chaves:', chavesArray.length);
+      logDebug('Estrutura de chaves:', JSON.stringify(chavesArray, null, 2));
+      
+      chavesArray.forEach((chave, idx) => {
+        logDebug(`Processando chave[${idx}]:`, Object.keys(chave));
+        
+        const chaveNFeRPS = {
+          inscricaoPrestador: null,
+          numeroNFe: null,
+          codigoVerificacao: null,
+          chaveRPS: null,
+        };
+
+        // Parse ChaveNFe (contains NumeroNFe, CodigoVerificacao, InscricaoPrestador)
+        const chaveNFe = getXmlValue(chave, 'ChaveNFe');
+        if (chaveNFe) {
+          chaveNFeRPS.inscricaoPrestador = getXmlValue(chaveNFe, 'InscricaoPrestador');
+          chaveNFeRPS.numeroNFe = getXmlValue(chaveNFe, 'NumeroNFe');
+          chaveNFeRPS.codigoVerificacao = getXmlValue(chaveNFe, 'CodigoVerificacao');
+          logDebug(`Chave ${idx} - ChaveNFe encontrada:`, chaveNFeRPS);
+        }
+
+        // Parse ChaveRPS
+        const chaveRPS = getXmlValue(chave, 'ChaveRPS');
+        if (chaveRPS) {
+          chaveNFeRPS.chaveRPS = {
+            inscricaoPrestador: getXmlValue(chaveRPS, 'InscricaoPrestador'),
+            serieRPS: getXmlValue(chaveRPS, 'SerieRPS'),
+            numeroRPS: getXmlValue(chaveRPS, 'NumeroRPS'),
+          };
+          logDebug(`Chave ${idx} - ChaveRPS encontrada:`, chaveNFeRPS.chaveRPS);
+        }
+
+        resultado.chavesNFeRPS.push(chaveNFeRPS);
+      });
+    } else {
+      logDebug('ChaveNFeRPS não encontrado em root. Chaves disponíveis:', Object.keys(root || {}));
+    }
+
+    logDebug('Resultado final parseado:', JSON.stringify(resultado, null, 2));
+
+    return resultado;
+  } catch (error) {
+    logErrorDebug('Erro ao parsear ResultadoOperacao:', error.message);
+    logErrorDebug('Stack:', error.stack);
+    return null;
+  }
+}
+
+/**
  * Parses RetornoConsultaSituacaoLote structure
  * @param {Object} retorno - Parsed RetornoXML
- * @returns {Object} Formatted response
+ * @returns {Promise<Object>} Formatted response
  */
-function parseRetornoConsultaSituacaoLote(retorno) {
+async function parseRetornoConsultaSituacaoLote(retorno) {
   const root = retorno.RetornoConsultaSituacaoLote || retorno;
   const erros = ensureArray(root.Erro);
 
@@ -1008,6 +1214,18 @@ function parseRetornoConsultaSituacaoLote(retorno) {
 
   if (root.ResultadoOperacao) {
     response.resultadoOperacao = root.ResultadoOperacao;
+    
+    // Parse the XML content inside ResultadoOperacao and add structured data
+    const resultadoXmlContent = typeof root.ResultadoOperacao === 'object' 
+      ? root.ResultadoOperacao._ 
+      : root.ResultadoOperacao;
+    
+    if (resultadoXmlContent) {
+      const parsedResultado = await parseResultadoOperacaoXml(resultadoXmlContent);
+      if (parsedResultado) {
+        response.resultado = parsedResultado;
+      }
+    }
   }
 
   if (erros.length > 0) {

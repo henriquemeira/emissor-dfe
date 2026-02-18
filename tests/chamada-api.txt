@@ -17,15 +17,15 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/envio-lote-rps \
   -d '{
     "layoutVersion": "v01-1",
     "ambiente": "producao",
-    "metodo": "sincrono",
+    "metodo": "assincrono",
     "lote": {
       "cabecalho": {
         "cpfCnpjRemetente": {
-          "cnpj": "5250772300018S"
+          "cnpj": "52507723000185"
         },
         "transacao": true,
         "dtInicio": "2026-02-01",
-        "dtFim": "2026-02-17",
+        "dtFim": "2026-02-18",
         "qtdRPS": 1,
         "valorTotalServicos": 1000.00,
         "valorTotalDeducoes": 0.00
@@ -35,10 +35,10 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/envio-lote-rps \
           "chaveRPS": {
             "inscricaoPrestador": 78709806,
             "serieRPS": "1",
-            "numeroRPS": 1
+            "numeroRPS": 6
           },
           "tipoRPS": "RPS",
-          "dataEmissao": "2026-02-17",
+          "dataEmissao": "2026-02-18",
           "statusRPS": "N",
           "tributacaoRPS": "T",
           "valorServicos": 1000.00,
@@ -62,7 +62,7 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/consulta-situacao-lo
     "cpfCnpjRemetente": {
       "cnpj": "52507723000185"
     },  
-    "numeroProtocolo": "569a03f0dd074b6880343051c2112b7b"
+    "numeroProtocolo": "c7f59d53844447d0b7a6f144962df257"
   }'  
   
   | jq -r '.data.soap.response' | base64 -d | zcat
@@ -84,7 +84,7 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/cancelamento-nfe \
         {
           "chaveNFe": {
             "inscricaoPrestador": 78709806,
-            "numeroNFe": 507
+            "numeroNFe": 508
           }
         }
       ]
