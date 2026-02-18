@@ -30,6 +30,26 @@ function buildSoapPayload(soap) {
   };
 }
 
+function ensureConsultaSituacaoLoteNamespaces(xml) {
+  let normalized = xml;
+
+  if (!normalized.includes('<CPFCNPJRemetente xmlns="">')) {
+    normalized = normalized.replace(
+      '<CPFCNPJRemetente>',
+      '<CPFCNPJRemetente xmlns="">'
+    );
+  }
+
+  if (!normalized.includes('<NumeroProtocolo xmlns="">')) {
+    normalized = normalized.replace(
+      '<NumeroProtocolo>',
+      '<NumeroProtocolo xmlns="">'
+    );
+  }
+
+  return normalized;
+}
+
 /**
  * Sends a batch of RPS for emission
  * @param {Object} data - Request data
@@ -390,15 +410,10 @@ async function consultarSituacaoLote(data, apiKey, isTest = false) {
     const certificatePassword = cryptoService.decrypt(account.senha);
     
     // Build XML for consultation
-    const consultaXml = xmlBuilder.buildPedidoConsultaSituacaoLote({
+    const consultaXml = ensureConsultaSituacaoLoteNamespaces(xmlBuilder.buildPedidoConsultaSituacaoLote({
       cpfCnpjRemetente: data.cpfCnpjRemetente,
       numeroProtocolo: data.numeroProtocolo,
-    });
-    
-    // Log the XML for debugging
-    console.log('=== XML Consulta Situação Lote ===');
-    console.log(consultaXml);
-    console.log('=== Tamanho total do XML:', consultaXml.length, 'bytes ===');
+    }));
     
     // Determine environment
     const isProduction = !isTest;

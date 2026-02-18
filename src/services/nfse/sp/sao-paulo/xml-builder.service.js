@@ -80,6 +80,15 @@ function buildCPFCNPJ(cpfCnpj) {
   throw new Error('CPF ou CNPJ é obrigatório');
 }
 
+function escapeXml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 /**
  * Builds RPS structure
  * @param {Object} rpsData - RPS data
@@ -285,31 +294,27 @@ function formatPercentual(percentual) {
 /**
  * Builds the PedidoConsultaSituacaoLote XML structure
  * @param {Object} data - Consultation data
- * @param {Object} data.cpfCnpjRemetente - CPF/CNPJ of sender
- * @param {string} data.numeroProtocolo - Protocol number from batch submission
+ * @param {Object} data.cpfCnpjRemetente - CPF/CNPJ do remetente
+ * @param {string} data.numeroProtocolo - Protocolo do lote
  * @returns {string} XML string
  */
 function buildPedidoConsultaSituacaoLote(data) {
-  const { cpfCnpjRemetente, numeroProtocolo } = data;
+  const cpfCnpj = data.cpfCnpjRemetente || {};
+  const cpfCnpjTag = cpfCnpj.cnpj ? 'CNPJ' : 'CPF';
+  const cpfCnpjValue = cpfCnpj.cnpj || cpfCnpj.cpf;
 
-  // Build XML object structure according to schema
-  const xmlObject = {
-    'PedidoConsultaSituacaoLote': {
-      '$': {
-        'xmlns': 'http://www.prefeitura.sp.gov.br/nfe',
-        'xmlns:tipos': 'http://www.prefeitura.sp.gov.br/nfe/tipos',
-      },
-      'CPFCNPJRemetente': [buildCPFCNPJ(cpfCnpjRemetente)],
-      'NumeroProtocolo': [numeroProtocolo],
-    },
-  };
+  if (!cpfCnpjValue) {
+    throw new Error('CPF ou CNPJ é obrigatório');
+  }
 
-  const builder = new xml2js.Builder({
-    xmldec: { version: '1.0', encoding: 'UTF-8' },
-    renderOpts: { pretty: false },
-  });
-
-  return builder.buildObject(xmlObject);
+  return (
+    '<PedidoConsultaSituacaoLote xmlns="http://www.prefeitura.sp.gov.br/nfe" xmlns:tipos="http://www.prefeitura.sp.gov.br/nfe/tipos">' +
+    '<CPFCNPJRemetente xmlns="">' +
+    '<' + cpfCnpjTag + '>' + escapeXml(cpfCnpjValue) + '</' + cpfCnpjTag + '>' +
+    '</CPFCNPJRemetente>' +
+    '<NumeroProtocolo xmlns="">' + escapeXml(data.numeroProtocolo) + '</NumeroProtocolo>' +
+    '</PedidoConsultaSituacaoLote>'
+  );
 }
 
 module.exports = {
