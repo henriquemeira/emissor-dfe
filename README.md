@@ -26,8 +26,15 @@ API middleware para emissão simplificada de documentos fiscais eletrônicos bra
 - Validação de certificados A1
 - Health check endpoint
 
-**Fase 2** - 🚧 Em desenvolvimento
-- Emissão, cancelamento, consulta e inutilização de NF-e
+**Fase 2** - ✅ **COMPLETO**
+- NFS-e (Nota Fiscal de Serviço Eletrônica) - Município de São Paulo/SP
+  - ✅ Emissão de RPS em lote (EnvioLoteRpsAsync)
+  - ✅ Teste de envio de lote (TesteEnvioLoteRpsAsync)
+  - ✅ Suporte ao layout v01-1 (assíncrono)
+  - ✅ Assinatura digital de RPS e XML
+  - ✅ Validação conforme XSD oficial
+  - 📅 Consulta de situação do lote (planejado)
+  - 📅 Consulta de guia (planejado)
 
 **Fase 3** - 📅 Planejado
 - Emissão de CT-e, MDF-e e NFS-e
@@ -48,8 +55,9 @@ API middleware para emissão simplificada de documentos fiscais eletrônicos bra
 
 ### Certificados Digitais
 - **node-forge** - Manipulação de certificados PKCS#12 (.pfx/.p12)
-- **xml2js** - Manipulação de XML (para NF-e)
-- **axios** - Requisições HTTP (para comunicação com SEFAZ)
+- **xml2js** - Manipulação de XML
+- **xml-crypto** - Assinatura XML-DSig W3C compliant
+- **axios** - Requisições HTTP (SOAP)
 
 ### Upload
 - **multer** - Upload de arquivos (certificados)
@@ -290,14 +298,88 @@ Deleta a conta e todos os dados associados
 
 ### Emissão de Documentos Fiscais
 
-🚧 **Em desenvolvimento (Fase 2 e 3)**
+#### NFS-e São Paulo/SP
+
+Para documentação completa sobre NFS-e de São Paulo, consulte:
+- **[NFSE-SAO-PAULO-API.md](docs/NFSE-SAO-PAULO-API.md)** - Documentação detalhada da API
+- **[NFSE-SAO-PAULO-IMPLEMENTATION.md](docs/NFSE-SAO-PAULO-IMPLEMENTATION.md)** - Detalhes da implementação
+
+**Envio de Lote de RPS:**
+
+`POST /api/v1/nfse/sp/sao-paulo/envio-lote-rps`
+
+**Headers:**
+- `X-API-Key`: Sua API Key
+- `Content-Type`: application/json
+
+**Request Body:**
+```json
+{
+  "layoutVersion": "v01-1",
+  "ambiente": "teste",
+  "lote": {
+    "cabecalho": {
+      "cpfCnpjRemetente": { "cnpj": "12345678901234" },
+      "transacao": true,
+      "dtInicio": "2024-01-01",
+      "dtFim": "2024-01-31",
+      "qtdRPS": 1,
+      "valorTotalServicos": 1000.00,
+      "valorTotalDeducoes": 0.00
+    },
+    "rps": [
+      {
+        "chaveRPS": {
+          "inscricaoPrestador": 12345678,
+          "serieRPS": "NF",
+          "numeroRPS": 1
+        },
+        "tipoRPS": "RPS",
+        "dataEmissao": "2024-01-15",
+        "statusRPS": "N",
+        "tributacaoRPS": "T",
+        "valorServicos": 1000.00,
+        "valorDeducoes": 0.00,
+        "codigoServico": 1234,
+        "aliquotaServicos": 0.05,
+        "issRetido": false,
+        "discriminacao": "Serviços de consultoria em TI"
+      }
+    ]
+  }
+}
+```
+
+**Response 200:**
+```json
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "layoutVersion": "v01-1",
+    "resultado": {
+      "sucesso": true,
+      "versao": "1",
+      "informacoesLote": {
+        "numeroProtocolo": "123456789",
+        "dataRecebimento": "2024-01-15T10:30:00"
+      }
+    }
+  }
+}
+```
+
+---
+
+#### Outros Documentos Fiscais
+
+🚧 **Em desenvolvimento (Fase 3 e 4)**
 
 Os seguintes endpoints serão implementados nas próximas fases:
 - `POST /api/v1/nfe/emitir` - Emitir NF-e
 - `POST /api/v1/nfe/cancelar` - Cancelar NF-e
 - `POST /api/v1/nfe/consultar` - Consultar NF-e
 - `POST /api/v1/nfe/inutilizar` - Inutilizar numeração de NF-e
-- `POST /api/v1/nfse/emitir` - Emitir NFS-e
 - `POST /api/v1/cte/emitir` - Emitir CT-e
 - `POST /api/v1/mdfe/emitir` - Emitir MDF-e
 
@@ -352,22 +434,30 @@ emissor-dfe/
 │   │   ├── crypto.service.js    # Criptografia AES-256-GCM
 │   │   ├── certificate.service.js # Validação e extração de dados de certificados
 │   │   ├── storage.service.js   # Operações de leitura/escrita em disco
-│   │   ├── nfe.service.js       # Lógica de NF-e (Fase 2)
-│   │   ├── nfse.service.js      # Lógica de NFS-e (Fase 3)
-│   │   ├── cte.service.js       # Lógica de CT-e (Fase 3)
-│   │   └── mdfe.service.js      # Lógica de MDF-e (Fase 3)
+│   │   ├── nfe.service.js       # Lógica de NF-e (Fase 3)
+│   │   ├── nfse.service.js      # Lógica de NFS-e (Fase 2/3)
+│   │   │   └── sp/
+│   │   │       └── sao-paulo/   # NFS-e São Paulo (Fase 2 - Completo)
+│   │   │           ├── nfse-sp.service.js    # Orquestração principal
+│   │   │           ├── xml-builder.service.js # Construção de XML
+│   │   │           ├── signature.service.js   # Assinatura digital
+│   │   │           └── soap-client.service.js # Cliente SOAP
+│   │   ├── cte.service.js       # Lógica de CT-e (Fase 4)
+│   │   └── mdfe.service.js      # Lógica de MDF-e (Fase 4)
 │   ├── routes/
 │   │   ├── account.routes.js    # Rotas de gestão de conta
-│   │   ├── nfe.routes.js        # Rotas de NF-e (Fase 2)
-│   │   ├── nfse.routes.js       # Rotas de NFS-e (Fase 3)
-│   │   ├── cte.routes.js        # Rotas de CT-e (Fase 3)
-│   │   └── mdfe.routes.js       # Rotas de MDF-e (Fase 3)
+│   │   ├── nfe.routes.js        # Rotas de NF-e (Fase 3)
+│   │   ├── nfse.routes.js       # Rotas de NFS-e (Fase 2/3)
+│   │   ├── nfse-sp.routes.js    # Rotas de NFS-e São Paulo (Fase 2 - Completo)
+│   │   ├── cte.routes.js        # Rotas de CT-e (Fase 4)
+│   │   └── mdfe.routes.js       # Rotas de MDF-e (Fase 4)
 │   ├── controllers/
 │   │   ├── account.controller.js # Controladores de conta
-│   │   ├── nfe.controller.js    # Controladores de NF-e (Fase 2)
-│   │   ├── nfse.controller.js   # Controladores de NFS-e (Fase 3)
-│   │   ├── cte.controller.js    # Controladores de CT-e (Fase 3)
-│   │   └── mdfe.controller.js   # Controladores de MDF-e (Fase 3)
+│   │   ├── nfe.controller.js    # Controladores de NF-e (Fase 3)
+│   │   ├── nfse.controller.js   # Controladores de NFS-e (Fase 2/3)
+│   │   ├── nfse-sp.controller.js # Controladores de NFS-e São Paulo (Fase 2 - Completo)
+│   │   ├── cte.controller.js    # Controladores de CT-e (Fase 4)
+│   │   └── mdfe.controller.js   # Controladores de MDF-e (Fase 4)
 │   └── utils/
 │       ├── apiKey.js            # Geração e validação de API Keys
 │       └── validators.js        # Validadores personalizados (CNPJ, etc.)
@@ -470,8 +560,15 @@ Contribuições são bem-vindas! Por favor:
 ## 📝 Roadmap
 
 - [x] **Fase 1 (MVP)** - Gestão de contas e certificados
-- [ ] **Fase 2** NFS-e (Nota Fiscal de Serviço Eletrônica)
-  - [ ] Emissão de RPS do Município de São Paulo / SP
+- [x] **Fase 2** - NFS-e (Nota Fiscal de Serviço Eletrônica)
+  - [x] Emissão de RPS do Município de São Paulo / SP
+    - [x] EnvioLoteRpsAsync (envio em lote)
+    - [x] TesteEnvioLoteRpsAsync (teste/validação)
+    - [x] Layout v01-1 (assíncrono)
+    - [x] Assinatura digital (RPS + XML-DSig)
+    - [x] Documentação completa
+  - [ ] Consulta de situação do lote
+  - [ ] Consulta de guia de recolhimento
 - [ ] **Fase 3** - Implementação completa de NF-e
   - [ ] Emissão de NF-e
   - [ ] Cancelamento de NF-e
@@ -487,6 +584,7 @@ Contribuições são bem-vindas! Por favor:
   - [ ] Suporte a múltiplos certificados por conta
   - [ ] Geração automática de DANFE (PDF)
   - [ ] Cache de consultas SEFAZ
+  - [ ] Outros municípios para NFS-e
 
 ## 📄 Licença
 
