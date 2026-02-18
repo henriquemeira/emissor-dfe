@@ -4,6 +4,7 @@ const soapClient = require('./soap-client.service');
 const storageService = require('../../../storage.service');
 const cryptoService = require('../../../crypto.service');
 const zlib = require('zlib');
+const { debuglog } = require('util');
 
 /**
  * Main service for São Paulo NFS-e operations (v01-1)
@@ -106,11 +107,9 @@ async function enviarLoteRps(data, apiKey, isTest = false) {
     const signedXml = xmlBuilder.buildPedidoEnvioLoteRPS(loteData, batchSignature);
     
     // Log the signed XML for debugging
-    console.log('=== XML Assinado ===');
-    console.log(signedXml);
-    //console.log('=== XML Assinado (últimos 5000 chars) ===');
-    //console.log(signedXml.substring(signedXml.length - 5000));
-    console.log('=== Tamanho total do XML:', signedXml.length, 'bytes ===');
+    debuglog('=== XML Assinado ===');
+    debuglog(signedXml);
+    debuglog('=== Tamanho total do XML:', signedXml.length, 'bytes ===');
     
     // Determine environment
     const isProduction = !isTest;
@@ -192,11 +191,9 @@ async function testarEnvioLoteRps(data, apiKey) {
     const signedXml = xmlBuilder.buildPedidoEnvioLoteRPS(loteData, batchSignature);
     
     // Log the signed XML for debugging
-    console.log('=== XML Assinado ===');
-    console.log(signedXml);
-    //console.log('=== XML Assinado (últimos 500 chars) ===');
-    //console.log(signedXml.substring(signedXml.length - 500));
-    console.log('=== Tamanho total do XML:', signedXml.length, 'bytes ===');
+    debuglog('=== XML Assinado ===');
+    debuglog(signedXml);
+    debuglog('=== Tamanho total do XML:', signedXml.length, 'bytes ===');
     
     // Send to test web service with certificate for mTLS authentication
     const soapResult = await soapClient.testeEnvioLoteRpsAsync(
