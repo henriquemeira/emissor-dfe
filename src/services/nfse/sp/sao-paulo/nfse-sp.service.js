@@ -349,8 +349,87 @@ function validateRPS(rps, index) {
   }
 }
 
+/**
+ * Consults batch status using protocol number
+ * @param {Object} data - Request data
+ * @param {string} data.layoutVersion - Layout version (must be 'v01-1')
+ * @param {Object} data.cpfCnpjRemetente - CPF/CNPJ of sender
+ * @param {string} data.numeroProtocolo - Protocol number from batch submission
+ * @param {string} apiKey - API key for certificate retrieval
+ * @param {boolean} isTest - Whether to use test mode
+ * @returns {Object} Response from web service
+ */
+async function consultarSituacaoLote(data, apiKey, isTest = false) {
+  try {
+    // Validate layout version
+    if (data.layoutVersion !== SUPPORTED_LAYOUT_VERSION) {
+      throw new Error(`Layout não suportado. Versão esperada: ${SUPPORTED_LAYOUT_VERSION}`);
+    }
+    
+    // Validate required fields
+    if (!data.cpfCnpjRemetente) {
+      throw new Error('CPF/CNPJ do remetente é obrigatório');
+    }
+    
+    if (!data.cpfCnpjRemetente.cnpj && !data.cpfCnpjRemetente.cpf) {
+      throw new Error('Informe CPF ou CNPJ do remetente');
+    }
+    
+    if (!data.numeroProtocolo) {
+      throw new Error('Número do protocolo é obrigatório');
+    }
+    
+    // Get certificate from storage
+    const account = await storageService.loadAccount(apiKey);
+    if (!account || !account.certificado) {
+      throw new Error('Certificado não encontrado para esta API Key');
+    }
+    
+    // Decrypt certificate
+    const certificateBuffer = cryptoService.decryptFile(account.certificado);
+    const certificatePassword = cryptoService.decrypt(account.senha);
+    
+    // Build XML for consultation
+    const consultaXml = xmlBuilder.buildPedidoConsultaSituacaoLote({
+      cpfCnpjRemetente: data.cpfCnpjRemetente,
+      numeroProtocolo: data.numeroProtocolo,
+    });
+    
+    // Log the XML for debugging
+    console.log('=== XML Consulta Situação Lote ===');
+    console.log(consultaXml);
+    console.log('=== Tamanho total do XML:', consultaXml.length, 'bytes ===');
+    
+    // Determine environment
+    const isProduction = !isTest;
+    
+    // Send to web service with certificate for mTLS authentication
+    const soapResult = await soapClient.consultaSituacaoLote(
+      consultaXml,
+      1,
+      isProduction,
+      certificateBuffer,
+      certificatePassword
+    );
+
+    const soapPayload = data.includeSoap
+      ? buildSoapPayload(soapResult.soap)
+      : undefined;
+    
+    return {
+      success: true,
+      layoutVersion: data.layoutVersion,
+      resultado: soapResult.parsed,
+      ...(soapPayload && { soap: soapPayload }),
+    };
+  } catch (error) {
+    throw new Error(`Erro ao consultar situação do lote: ${error.message}`);
+  }
+}
+
 module.exports = {
   enviarLoteRps,
   testarEnvioLoteRps,
+  consultarSituacaoLote,
   SUPPORTED_LAYOUT_VERSION,
 };

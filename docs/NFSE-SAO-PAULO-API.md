@@ -8,6 +8,7 @@ Esta API implementa a Fase 2 da emissão de NFS-e (Nota Fiscal de Serviço Eletr
 
 - ✅ Suporte ao método **EnvioLoteRpsAsync** (envio assíncrono de lote de RPS)
 - ✅ Suporte ao método **TesteEnvioLoteRpsAsync** (validação sem emissão)
+- ✅ Suporte ao método **ConsultaSituacaoLote** (consulta de situação do lote)
 - ✅ Assinatura digital automática dos RPS e do lote
 - ✅ Validação completa dos dados conforme XSD
 - ✅ Comunicação via SOAP com a Prefeitura de São Paulo
@@ -159,6 +160,73 @@ Content-Type: application/json
 
 ---
 
+### 3. Consulta de Situação do Lote
+
+Consulta o status de processamento de um lote usando o número do protocolo.
+
+**Endpoint:** `POST /api/v1/nfse/sp/sao-paulo/consulta-situacao-lote`
+
+**Headers:**
+```
+X-API-Key: sua-api-key-aqui
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "layoutVersion": "v01-1",
+  "ambiente": "teste",
+  "cpfCnpjRemetente": {
+    "cnpj": "12345678901234"
+  },
+  "numeroProtocolo": "ce511ff737bb48a897309ad41e0642f3"
+}
+```
+
+**Resposta de Sucesso (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "layoutVersion": "v01-1",
+    "resultado": {
+      "sucesso": true,
+      "situacao": {
+        "codigo": 3,
+        "nome": "processado"
+      },
+      "numeroLote": 12345,
+      "dataRecebimento": "2024-01-15T10:30:00",
+      "dataProcessamento": "2024-01-15T10:35:00",
+      "resultadoOperacao": "Lote processado com sucesso"
+    }
+  }
+}
+```
+
+**Códigos de Situação do Lote:**
+| Código | Nome | Descrição |
+|--------|------|-----------|
+| 0 | enviado | Lote enviado e aguardando processamento |
+| 1 | invalidado | Lote invalidado devido a erros |
+| 2 | verificado | Lote verificado e em processamento |
+| 3 | processado | Lote processado com sucesso |
+
+**Resposta de Erro (400):**
+```json
+{
+  "success": false,
+  "error": {
+    "code": "MISSING_PROTOCOL",
+    "message": "Campo numeroProtocolo é obrigatório"
+  }
+}
+```
+
+---
+
 ## Estrutura de Dados
 
 ### Cabeçalho do Lote
@@ -267,6 +335,8 @@ Content-Type: application/json
 | `MISSING_LAYOUT_VERSION` | Campo layoutVersion não foi informado |
 | `UNSUPPORTED_LAYOUT` | Layout informado não é suportado (deve ser v01-1) |
 | `MISSING_LOTE` | Campo lote não foi informado |
+| `MISSING_CPF_CNPJ` | Campo cpfCnpjRemetente não foi informado |
+| `MISSING_PROTOCOL` | Campo numeroProtocolo não foi informado |
 | `INVALID_API_KEY` | API Key inválida ou não encontrada |
 | Outros | Erros específicos retornados pela Prefeitura de SP |
 
@@ -378,8 +448,8 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/envio-lote-rps \
 1. ⚠️ **Certificado Digital:** É obrigatório ter um certificado digital válido cadastrado na conta
 2. ⚠️ **Layout v01-1:** Este é o único layout suportado atualmente
 3. ⚠️ **Sem IBS/CBS:** Este layout não contempla as tags da reforma tributária
-4. ⚠️ **Processamento Assíncrono:** O retorno indica apenas o recebimento do lote, não a emissão final
-5. ℹ️ **Consulta de Status:** Use os métodos de consulta (futuros) para verificar o processamento
+4. ⚠️ **Processamento Assíncrono:** O retorno do envio indica apenas o recebimento do lote, não a emissão final
+5. ℹ️ **Consulta de Status:** Use o método ConsultaSituacaoLote para verificar o processamento do lote
 
 ---
 
@@ -387,9 +457,9 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/envio-lote-rps \
 
 As seguintes funcionalidades serão implementadas em fases futuras:
 
-- [ ] ConsultaSituacaoLoteSync - Consultar situação do lote
-- [ ] ConsultaSituacaoGuiaSync - Consultar situação da guia
-- [ ] ConsultaGuiaSync - Consultar dados da guia
+- [x] ConsultaSituacaoLote - Consultar situação do lote
+- [ ] ConsultaSituacaoGuiaAsync - Consultar situação da guia
+- [ ] ConsultaGuiaAsync - Consultar dados da guia
 - [ ] EmissaoGuiaAsync - Emissão de guia de recolhimento
 
 ---
