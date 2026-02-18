@@ -305,13 +305,13 @@ async function consultaSituacaoLote(xml, versaoSchema = 1, isProduction = false,
 }
 
 /**
- * Sends a single RPS to São Paulo web service (EnvioRPS - synchronous)
+ * Sends a single RPS to São Paulo Web Service (EnvioRPS - synchronous)
  * @param {string} xml - Signed XML (PedidoEnvioRPS)
  * @param {number} versaoSchema - Schema version (1 for v01-1)
  * @param {boolean} isProduction - Whether to use production endpoint
  * @param {Buffer} certificateBuffer - Certificate PFX buffer for mTLS authentication
  * @param {string} certificatePassword - Certificate password
- * @returns {Object} Parsed response from web service
+ * @returns {Object} Parsed response from Web Service
  */
 async function envioRps(xml, versaoSchema = 1, isProduction = false, certificateBuffer = null, certificatePassword = null) {
   try {
@@ -469,6 +469,18 @@ async function parseSoapResponse(soapXml) {
 }
 
 /**
+ * Ensures a value is an array
+ * @param {*} value - Value to normalize
+ * @returns {Array} Array containing the value(s)
+ */
+function ensureArray(value) {
+  if (!value) {
+    return [];
+  }
+  return Array.isArray(value) ? value : [value];
+}
+
+/**
  * Parses SOAP response for EnvioRPS (synchronous)
  * @param {string} soapXml - SOAP response XML
  * @returns {Object} Parsed response
@@ -536,7 +548,7 @@ function parseRetornoEnvioLoteRPSAsync(retorno) {
   const root = retorno.RetornoEnvioLoteRPSAsync || retorno;
   
   const cabecalho = root.Cabecalho || {};
-  const erros = root.Erro ? (Array.isArray(root.Erro) ? root.Erro : [root.Erro]) : [];
+  const erros = ensureArray(root.Erro);
   
   const response = {
     sucesso: cabecalho.Sucesso === 'true' || cabecalho.Sucesso === true,
@@ -571,8 +583,8 @@ function parseRetornoEnvioRPS(retorno) {
   const root = retorno.RetornoEnvioRPS || retorno;
   
   const cabecalho = root.Cabecalho || {};
-  const erros = root.Erro ? (Array.isArray(root.Erro) ? root.Erro : [root.Erro]) : [];
-  const alertas = root.Alerta ? (Array.isArray(root.Alerta) ? root.Alerta : [root.Alerta]) : [];
+  const erros = ensureArray(root.Erro);
+  const alertas = ensureArray(root.Alerta);
   
   const response = {
     sucesso: cabecalho.Sucesso === 'true' || cabecalho.Sucesso === true,
@@ -631,7 +643,7 @@ function parseRetornoEnvioRPS(retorno) {
  */
 function parseRetornoConsultaSituacaoLote(retorno) {
   const root = retorno.RetornoConsultaSituacaoLote || retorno;
-  const erros = root.Erro ? (Array.isArray(root.Erro) ? root.Erro : [root.Erro]) : [];
+  const erros = ensureArray(root.Erro);
 
   const response = {
     sucesso: root.Sucesso === 'true' || root.Sucesso === true,

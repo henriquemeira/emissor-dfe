@@ -293,10 +293,10 @@ function formatPercentual(percentual) {
 
 /**
  * Builds the PedidoEnvioRPS XML structure (single RPS, synchronous)
- * @param {Object} data - RPS data
+ * @param {Object} data - Request data
  * @param {Object} data.cpfCnpjRemetente - CPF/CNPJ do remetente
- * @param {Object} data.rps - Single RPS data with signature
- * @param {string} signature - Digital signature of the batch (XML string)
+ * @param {Object} data.rps - Single RPS object with signature already included
+ * @param {string} signature - Digital signature of the complete XML document
  * @returns {string} XML string
  */
 function buildPedidoEnvioRPS(data, signature) {

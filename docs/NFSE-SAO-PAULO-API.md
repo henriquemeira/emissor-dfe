@@ -157,8 +157,8 @@ Content-Type: application/json
 
 **Parâmetros:**
 - `metodo` (opcional, padrão: "assincrono"): Define o método de transmissão
-  - `"sincrono"`: Transmite apenas 1 RPS e retorna resultado imediatamente. Utiliza o método EnvioRPS do web service.
-  - `"assincrono"`: Transmite lote de RPS e retorna protocolo para consulta posterior. Utiliza o método EnvioLoteRpsAsync do web service.
+  - `"sincrono"`: Transmite apenas 1 RPS e retorna resultado imediatamente. Utiliza o método EnvioRPS do Web Service.
+  - `"assincrono"`: Transmite lote de RPS e retorna protocolo para consulta posterior. Utiliza o método EnvioLoteRpsAsync do Web Service.
 
 ⚠️ **Importante:** 
 - No modo síncrono, apenas **1 RPS** é permitido no array. Se enviar mais de 1 RPS, retornará erro.
