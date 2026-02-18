@@ -468,55 +468,61 @@ async function enviarRpsSincrono(data, apiKey, isTest = false) {
     const certificateBuffer = cryptoService.decryptFile(account.certificado);
     const certificatePassword = cryptoService.decrypt(account.senha);
     
-    // Get the single RPS (already validated to have only one)
-    const rps = data.lote.rps[0];
-    
-    // Sign the RPS
-    const assinatura = signatureService.signRPS(rps, certificateBuffer, certificatePassword);
-    
-    // Add signature to RPS
-    const rpsWithSignature = {
-      ...rps,
-      assinatura,
-    };
-    
-    // Build XML for single RPS
-    const xmlWithoutSignature = xmlBuilder.buildPedidoEnvioRPS(
-      {
-        cpfCnpjRemetente: data.lote.cabecalho.cpfCnpjRemetente,
-        rps: rpsWithSignature,
-      },
-      ''
+    // Sign each RPS (synchronous method also uses batch structure)
+    const rpsWithSignatures = await signAllRPS(
+      data.lote.rps,
+      certificateBuffer,
+      certificatePassword
     );
     
-    // Sign the complete XML
-    const batchSignature = signatureService.signXMLBatch(
+    // Update lote with signed RPS
+    const loteData = {
+      cabecalho: data.lote.cabecalho,
+      rps: rpsWithSignatures,
+    };
+    
+    // DEBUG: Log lote data structure
+    debuglog('=== SYNC: Estrutura do Lote ===');
+    debuglog('Cabecalho:', JSON.stringify(loteData.cabecalho, null, 2));
+    debuglog('Quantidade de RPS:', loteData.rps.length);
+    debuglog('=== FIM: Estrutura do Lote ===');
+    
+    // Build XML for batch (synchronous uses same structure as async)
+    const xmlWithoutSignature = xmlBuilder.buildPedidoEnvioLoteRPS(loteData, '');
+    
+    // DEBUG: Log XML before signature
+    debuglog('=== SYNC: XML ANTES DA ASSINATURA ===');
+    debuglog(xmlWithoutSignature);
+    debuglog('=== FIM: XML ANTES DA ASSINATURA ===');
+    
+    // Sign the complete XML batch (using sync-specific signature function)
+    const batchSignature = signatureService.signXMLBatchSync(
       xmlWithoutSignature,
       certificateBuffer,
       certificatePassword
     );
     
+    // DEBUG: Log signature
+    debuglog('=== SYNC: ASSINATURA GERADA ===');
+    debuglog(batchSignature.substring(0, 500) + '...');
+    debuglog('=== FIM: ASSINATURA ===');
+    
     // Build final XML with signature
-    const signedXml = xmlBuilder.buildPedidoEnvioRPS(
-      {
-        cpfCnpjRemetente: data.lote.cabecalho.cpfCnpjRemetente,
-        rps: rpsWithSignature,
-      },
-      batchSignature
-    );
+    const signedXml = xmlBuilder.buildPedidoEnvioLoteRPS(loteData, batchSignature);
     
     // Log the signed XML for debugging
-    debuglog('=== XML Assinado (Síncrono) ===');
+    debuglog('=== SYNC: XML FINAL ASSINADO ===');
     debuglog(signedXml);
+    debuglog('=== FIM: XML FINAL ASSINADO ===');
     debuglog('=== Tamanho total do XML:', signedXml.length, 'bytes ===');
     
     // Determine environment
     const isProduction = !isTest;
     
-    // Send to web service with certificate for mTLS authentication
-    const soapResult = await soapClient.envioRps(
+    // Send to web service with certificate for mTLS authentication (synchronous endpoint)
+    const soapResult = await soapClient.envioLoteRpsSync(
       signedXml, 
-      1, 
+      1,
       isProduction,
       certificateBuffer,
       certificatePassword

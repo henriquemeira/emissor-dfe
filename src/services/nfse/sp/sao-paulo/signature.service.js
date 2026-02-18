@@ -234,6 +234,73 @@ function signXMLBatch(xml, certificateBuffer, password) {
 }
 
 /**
+ * Signs XML batch for synchronous method (isolated implementation)
+ * @param {string} xml - XML to sign
+ * @param {Buffer} certificateBuffer - Certificate buffer
+ * @param {string} password - Certificate password
+ * @returns {string} Signature XML fragment
+ */
+function signXMLBatchSync(xml, certificateBuffer, password) {
+  try {
+    // Get private key and certificate from PFX
+    const { privateKey, certificate } = getCertificateAndKey(certificateBuffer, password);
+    
+    // Convert private key to PEM format for xml-crypto
+    const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
+    
+    // Create signature using xml-crypto
+    const sig = new xmlCrypto.SignedXml({
+      privateKey: privateKeyPem,
+    });
+    
+    // Add reference to the document (root element only)
+    sig.addReference({
+      xpath: '/*',
+      uri: '',
+      isEmptyUri: true,
+      digestAlgorithm: 'http://www.w3.org/2000/09/xmldsig#sha1',
+      transforms: [
+        'http://www.w3.org/2000/09/xmldsig#enveloped-signature',
+        'http://www.w3.org/TR/2001/REC-xml-c14n-20010315'
+      ],
+    });
+    
+    // Set canonicalization and signature algorithms
+    sig.canonicalizationAlgorithm = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
+    sig.signatureAlgorithm = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
+    
+    // Get certificate in base64 format
+    const certPem = forge.pki.certificateToPem(certificate);
+    const certBase64 = certPem
+      .replace('-----BEGIN CERTIFICATE-----', '')
+      .replace('-----END CERTIFICATE-----', '')
+      .replace(/\n/g, '')
+      .replace(/\r/g, '')
+      .trim();
+    
+    // DO NOT set keyInfoProvider - we'll add KeyInfo manually after signature
+    
+    // Compute signature
+    sig.computeSignature(xml);
+    
+    // Get the signature XML (without KeyInfo)
+    let signatureXml = sig.getSignatureXml();
+    
+    // Ensure KeyInfo with certificate is properly added
+    // Remove any existing broken KeyInfo tags
+    signatureXml = signatureXml.replace(/<KeyInfo>.*?<\/KeyInfo>/g, '');
+    
+    // Add KeyInfo before closing Signature tag
+    const keyInfoXml = `<KeyInfo><X509Data><X509Certificate>${certBase64}</X509Certificate></X509Data></KeyInfo>`;
+    signatureXml = signatureXml.replace('</Signature>', `${keyInfoXml}</Signature>`);
+    
+    return signatureXml;
+  } catch (error) {
+    throw new Error(`Erro ao assinar lote XML (síncrono): ${error.message}`);
+  }
+}
+
+/**
  * Parses signature XML string into object structure
  * @param {string} signatureXml - Signature XML string
  * @returns {string} Signature XML
@@ -310,5 +377,6 @@ function getCertificateAndKey(certificateBuffer, password) {
 module.exports = {
   signRPS,
   signXMLBatch,
+  signXMLBatchSync,
   buildRPSStringToSign,
 };
