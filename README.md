@@ -570,8 +570,7 @@ Contribuições são bem-vindas! Por favor:
     - [x] Documentação completa
     - [x] EnvioRps (envio individual)
   - [x] Consulta de situação do lote
-  - [ ] Cancelamento de NFS-e
-  - [ ] Consulta de guia de recolhimento
+  - [x] Cancelamento de NFS-e
 - [ ] **Fase 3** - Implementação completa de NF-e
   - [ ] Emissão de NF-e
   - [ ] Cancelamento de NF-e
@@ -580,6 +579,8 @@ Contribuições são bem-vindas! Por favor:
 - [ ] **Fase 4** - Outros documentos fiscais
   - [ ] CT-e (Conhecimento de Transporte Eletrônico)
   - [ ] MDF-e (Manifesto Eletrônico de Documentos Fiscais)
+  - [ ] Emissão de Guia de Recolhimento de impostos de serviços prestados (NFSe)
+  - [ ] Consulta de guia de recolhimento de impostos de serviços prestados (NFSe)
 
 - [ ] **Futuro**
   - [ ] Webhooks para notificações
@@ -595,4 +596,4 @@ MIT
 
 ---
 
-**Desenvolvido com ❤️ para simplificar a emissão de documentos fiscais eletrônicos no Brasil**
+**Desenvolvido para simplificar a emissão de documentos fiscais eletrônicos no Brasil**
