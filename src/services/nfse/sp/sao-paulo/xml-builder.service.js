@@ -292,6 +292,57 @@ function formatPercentual(percentual) {
 }
 
 /**
+ * Builds the PedidoEnvioRPS XML structure (single RPS, synchronous)
+ * @param {Object} data - Request data
+ * @param {Object} data.cpfCnpjRemetente - CPF/CNPJ do remetente
+ * @param {Object} data.rps - Single RPS object with signature already included
+ * @param {string} signature - Digital signature of the complete XML document
+ * @returns {string} XML string
+ */
+function buildPedidoEnvioRPS(data, signature) {
+  const { cpfCnpjRemetente, rps } = data;
+
+  // Build XML object structure according to schema
+  const xmlObject = {
+    'PedidoEnvioRPS': {
+      '$': {
+        'xmlns': 'http://www.prefeitura.sp.gov.br/nfe',
+        'xmlns:tipos': 'http://www.prefeitura.sp.gov.br/nfe/tipos',
+        'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#',
+      },
+      'Cabecalho': [{
+        '$': {
+          'Versao': '1',
+          'xmlns': '',
+        },
+        'CPFCNPJRemetente': [buildCPFCNPJ(cpfCnpjRemetente)],
+      }],
+      'RPS': [{
+        '$': { 'xmlns': '' },
+        ...buildRPS(rps),
+      }],
+    },
+  };
+
+  const builder = new xml2js.Builder({
+    xmldec: { version: '1.0', encoding: 'UTF-8' },
+    renderOpts: { pretty: false },
+  });
+
+  let xmlString = builder.buildObject(xmlObject);
+  
+  // If signature is provided, insert it before closing tag
+  if (signature && signature.trim()) {
+    // Remove the closing tag
+    xmlString = xmlString.replace('</PedidoEnvioRPS>', '');
+    // Add signature and closing tag
+    xmlString += signature + '</PedidoEnvioRPS>';
+  }
+  
+  return xmlString;
+}
+
+/**
  * Builds the PedidoConsultaSituacaoLote XML structure
  * @param {Object} data - Consultation data
  * @param {Object} data.cpfCnpjRemetente - CPF/CNPJ do remetente
@@ -319,5 +370,6 @@ function buildPedidoConsultaSituacaoLote(data) {
 
 module.exports = {
   buildPedidoEnvioLoteRPS,
+  buildPedidoEnvioRPS,
   buildPedidoConsultaSituacaoLote,
 };

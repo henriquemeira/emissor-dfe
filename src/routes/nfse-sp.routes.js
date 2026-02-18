@@ -10,12 +10,13 @@ const { authenticateApiKey } = require('../middleware/auth');
 
 /**
  * POST /envio-lote-rps
- * Sends a batch of RPS for NFS-e emission
+ * Sends a batch of RPS for NFS-e emission (supports both synchronous and asynchronous modes)
  * 
  * Request body:
  * {
  *   "layoutVersion": "v01-1",
  *   "ambiente": "teste" | "producao",  // opcional, padrão: teste
+ *   "metodo": "sincrono" | "assincrono",  // opcional, padrão: assincrono
  *   "lote": {
  *     "cabecalho": {
  *       "cpfCnpjRemetente": { "cnpj": "12345678901234" },
@@ -48,6 +49,11 @@ const { authenticateApiKey } = require('../middleware/auth');
  *     ]
  *   }
  * }
+ * 
+ * Notes:
+ * - metodo "sincrono": Transmite apenas 1 RPS por vez e retorna o resultado imediatamente
+ * - metodo "assincrono": Transmite lote de RPS e retorna protocolo para consulta posterior
+ * - Se metodo="sincrono", apenas 1 RPS é permitido no array
  */
 router.post('/envio-lote-rps', authenticateApiKey, nfseSpController.enviarLoteRps);
 

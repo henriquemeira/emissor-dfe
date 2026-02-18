@@ -439,9 +439,108 @@ async function consultarSituacaoLote(data, apiKey, isTest = false) {
   }
 }
 
+/**
+ * Sends a single RPS synchronously
+ * @param {Object} data - Request data
+ * @param {string} data.layoutVersion - Layout version (must be 'v01-1')
+ * @param {Object} data.lote - Batch data containing header and single RPS
+ * @param {string} apiKey - API key for certificate retrieval
+ * @param {boolean} isTest - Whether to use test mode
+ * @returns {Object} Response from web service with immediate processing result
+ */
+async function enviarRpsSincrono(data, apiKey, isTest = false) {
+  try {
+    // Validate layout version
+    if (data.layoutVersion !== SUPPORTED_LAYOUT_VERSION) {
+      throw new Error(`Layout não suportado. Versão esperada: ${SUPPORTED_LAYOUT_VERSION}`);
+    }
+    
+    // Validate required fields
+    validateLoteData(data.lote);
+    
+    // Get certificate from storage
+    const account = await storageService.loadAccount(apiKey);
+    if (!account || !account.certificado) {
+      throw new Error('Certificado não encontrado para esta API Key');
+    }
+    
+    // Decrypt certificate
+    const certificateBuffer = cryptoService.decryptFile(account.certificado);
+    const certificatePassword = cryptoService.decrypt(account.senha);
+    
+    // Get the single RPS (already validated to have only one)
+    const rps = data.lote.rps[0];
+    
+    // Sign the RPS
+    const assinatura = signatureService.signRPS(rps, certificateBuffer, certificatePassword);
+    
+    // Add signature to RPS
+    const rpsWithSignature = {
+      ...rps,
+      assinatura,
+    };
+    
+    // Build XML for single RPS
+    const xmlWithoutSignature = xmlBuilder.buildPedidoEnvioRPS(
+      {
+        cpfCnpjRemetente: data.lote.cabecalho.cpfCnpjRemetente,
+        rps: rpsWithSignature,
+      },
+      ''
+    );
+    
+    // Sign the complete XML
+    const batchSignature = signatureService.signXMLBatch(
+      xmlWithoutSignature,
+      certificateBuffer,
+      certificatePassword
+    );
+    
+    // Build final XML with signature
+    const signedXml = xmlBuilder.buildPedidoEnvioRPS(
+      {
+        cpfCnpjRemetente: data.lote.cabecalho.cpfCnpjRemetente,
+        rps: rpsWithSignature,
+      },
+      batchSignature
+    );
+    
+    // Log the signed XML for debugging
+    debuglog('=== XML Assinado (Síncrono) ===');
+    debuglog(signedXml);
+    debuglog('=== Tamanho total do XML:', signedXml.length, 'bytes ===');
+    
+    // Determine environment
+    const isProduction = !isTest;
+    
+    // Send to web service with certificate for mTLS authentication
+    const soapResult = await soapClient.envioRps(
+      signedXml, 
+      1, 
+      isProduction,
+      certificateBuffer,
+      certificatePassword
+    );
+
+    const soapPayload = data.includeSoap
+      ? buildSoapPayload(soapResult.soap)
+      : undefined;
+    
+    return {
+      success: true,
+      layoutVersion: data.layoutVersion,
+      resultado: soapResult.parsed,
+      ...(soapPayload && { soap: soapPayload }),
+    };
+  } catch (error) {
+    throw new Error(`Erro ao enviar RPS síncrono: ${error.message}`);
+  }
+}
+
 module.exports = {
   enviarLoteRps,
   testarEnvioLoteRps,
   consultarSituacaoLote,
+  enviarRpsSincrono,
   SUPPORTED_LAYOUT_VERSION,
 };

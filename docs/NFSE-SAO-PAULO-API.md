@@ -2,13 +2,15 @@
 
 ## Visão Geral
 
-Esta API implementa a Fase 2 da emissão de NFS-e (Nota Fiscal de Serviço Eletrônica) para o município de São Paulo/SP, conforme especificações do layout **v01-1** (assíncrono).
+Esta API implementa a Fase 2 da emissão de NFS-e (Nota Fiscal de Serviço Eletrônica) para o município de São Paulo/SP, conforme especificações do layout **v01-1**.
 
 ### Características
 
+- ✅ Suporte ao método **EnvioRPS** (envio síncrono de RPS individual)
 - ✅ Suporte ao método **EnvioLoteRpsAsync** (envio assíncrono de lote de RPS)
 - ✅ Suporte ao método **TesteEnvioLoteRpsAsync** (validação sem emissão)
 - ✅ Suporte ao método **ConsultaSituacaoLote** (consulta de situação do lote)
+- ✅ Modo híbrido: mesmo endpoint suporta transmissão síncrona e assíncrona
 - ✅ Assinatura digital automática dos RPS e do lote
 - ✅ Validação completa dos dados conforme XSD
 - ✅ Comunicação via SOAP com a Prefeitura de São Paulo
@@ -18,8 +20,10 @@ Esta API implementa a Fase 2 da emissão de NFS-e (Nota Fiscal de Serviço Eletr
 ### Versão do Layout
 
 - **Layout suportado:** `v01-1`
-- **Schema:** PedidoEnvioLoteRPS_v01.xsd
-- **WSDL:** nfews.prefeitura.sp.gov.br_lotenfeasync.asmx_WSDL.xml
+- **Schemas:** PedidoEnvioRPS_v01.xsd, PedidoEnvioLoteRPS_v01.xsd
+- **WSDLs:** 
+  - lotenfe.asmx (síncrono)
+  - lotenfeasync.asmx (assíncrono)
 
 ⚠️ **Importante:** Este layout **não inclui** as tags IBS/CBS da reforma tributária.
 
@@ -29,7 +33,9 @@ Esta API implementa a Fase 2 da emissão de NFS-e (Nota Fiscal de Serviço Eletr
 
 ### 1. Envio de Lote de RPS
 
-Envia um lote de RPS para emissão de NFS-e.
+Envia um lote de RPS para emissão de NFS-e. Suporta dois métodos de transmissão:
+- **Síncrono (sincrono):** Transmite um único RPS e retorna o resultado imediatamente
+- **Assíncrono (assincrono):** Transmite lote de RPS e retorna protocolo para consulta posterior
 
 **Endpoint:** `POST /api/v1/nfse/sp/sao-paulo/envio-lote-rps`
 
@@ -39,11 +45,12 @@ X-API-Key: sua-api-key-aqui
 Content-Type: application/json
 ```
 
-**Body:**
+**Body (Modo Assíncrono - padrão):**
 ```json
 {
   "layoutVersion": "v01-1",
   "ambiente": "teste",
+  "metodo": "assincrono",
   "lote": {
     "cabecalho": {
       "cpfCnpjRemetente": {
@@ -93,7 +100,72 @@ Content-Type: application/json
 }
 ```
 
-**Resposta de Sucesso (200):**
+**Body (Modo Síncrono):**
+```json
+{
+  "layoutVersion": "v01-1",
+  "ambiente": "teste",
+  "metodo": "sincrono",
+  "lote": {
+    "cabecalho": {
+      "cpfCnpjRemetente": {
+        "cnpj": "12345678901234"
+      },
+      "transacao": true,
+      "dtInicio": "2024-01-01",
+      "dtFim": "2024-01-31",
+      "qtdRPS": 1,
+      "valorTotalServicos": 1000.00,
+      "valorTotalDeducoes": 0.00
+    },
+    "rps": [
+      {
+        "chaveRPS": {
+          "inscricaoPrestador": 12345678,
+          "serieRPS": "NF",
+          "numeroRPS": 1
+        },
+        "tipoRPS": "RPS",
+        "dataEmissao": "2024-01-15",
+        "statusRPS": "N",
+        "tributacaoRPS": "T",
+        "valorServicos": 1000.00,
+        "valorDeducoes": 0.00,
+        "codigoServico": 1234,
+        "aliquotaServicos": 0.05,
+        "issRetido": false,
+        "cpfCnpjTomador": {
+          "cnpj": "98765432109876"
+        },
+        "razaoSocialTomador": "Empresa Tomadora Ltda",
+        "enderecoTomador": {
+          "tipoLogradouro": "Rua",
+          "logradouro": "Das Flores",
+          "numeroEndereco": "123",
+          "bairro": "Centro",
+          "cidade": 3550308,
+          "uf": "SP",
+          "cep": 12345678
+        },
+        "emailTomador": "tomador@exemplo.com.br",
+        "discriminacao": "Serviços de consultoria em TI prestados no período de 01/01/2024 a 31/01/2024"
+      }
+    ]
+  }
+}
+```
+
+**Parâmetros:**
+- `metodo` (opcional, padrão: "assincrono"): Define o método de transmissão
+  - `"sincrono"`: Transmite apenas 1 RPS e retorna resultado imediatamente. Utiliza o método EnvioRPS do Web Service.
+  - `"assincrono"`: Transmite lote de RPS e retorna protocolo para consulta posterior. Utiliza o método EnvioLoteRpsAsync do Web Service.
+
+⚠️ **Importante:** 
+- No modo síncrono, apenas **1 RPS** é permitido no array. Se enviar mais de 1 RPS, retornará erro.
+- Para envio de múltiplos RPS, utilize o modo assíncrono.
+- Recomendação: Para transmissão individual de um único RPS por vez, prefira o método síncrono.
+
+**Resposta de Sucesso - Modo Assíncrono (200):**
 ```json
 {
   "success": true,
@@ -106,6 +178,33 @@ Content-Type: application/json
       "informacoesLote": {
         "numeroProtocolo": "123456789",
         "dataRecebimento": "2024-01-15T10:30:00"
+      }
+    }
+  }
+}
+```
+
+**Resposta de Sucesso - Modo Síncrono (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "layoutVersion": "v01-1",
+    "resultado": {
+      "sucesso": true,
+      "versao": "1",
+      "chaveNFeRPS": {
+        "chaveNFe": {
+          "inscricaoPrestador": 12345678,
+          "numeroNFe": 987654,
+          "codigoVerificacao": "ABCD1234"
+        },
+        "chaveRPS": {
+          "inscricaoPrestador": 12345678,
+          "serieRPS": "NF",
+          "numeroRPS": 1
+        }
       }
     }
   }
