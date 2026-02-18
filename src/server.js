@@ -10,6 +10,7 @@ const storageService = require('./services/storage.service');
 const accountRoutes = require('./routes/account.routes');
 const nfeRoutes = require('./routes/nfe.routes');
 const nfseRoutes = require('./routes/nfse.routes');
+const nfseSpRoutes = require('./routes/nfse-sp.routes');
 const cteRoutes = require('./routes/cte.routes');
 const mdfeRoutes = require('./routes/mdfe.routes');
 
@@ -84,6 +85,7 @@ app.get('/health', async (req, res) => {
 app.use('/api/v1/account', accountRoutes);
 app.use('/api/v1/nfe', nfeRoutes);
 app.use('/api/v1/nfse', nfseRoutes);
+app.use('/api/v1/nfse/sp/sao-paulo', nfseSpRoutes);
 app.use('/api/v1/cte', cteRoutes);
 app.use('/api/v1/mdfe', mdfeRoutes);
 
