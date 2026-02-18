@@ -543,10 +543,189 @@ async function enviarRpsSincrono(data, apiKey, isTest = false) {
   }
 }
 
+/**
+ * Cancels one or more NFSe
+ * @param {Object} data - Request data
+ * @param {string} data.layoutVersion - Layout version (must be 'v01-1')
+ * @param {Object} data.cancelamento - Cancellation data containing header and details
+ * @param {string} apiKey - API key for certificate retrieval
+ * @param {boolean} isTest - Whether to use test mode
+ * @returns {Object} Response from web service
+ */
+async function cancelarNFe(data, apiKey, isTest = false) {
+  try {
+    // Validate layout version
+    if (data.layoutVersion !== SUPPORTED_LAYOUT_VERSION) {
+      throw new Error(`Layout não suportado. Versão esperada: ${SUPPORTED_LAYOUT_VERSION}`);
+    }
+    
+    // Validate required fields
+    validateCancelamentoData(data.cancelamento);
+    
+    // Get certificate from storage
+    const account = await storageService.loadAccount(apiKey);
+    if (!account || !account.certificado) {
+      throw new Error('Certificado não encontrado para esta API Key');
+    }
+    
+    // Decrypt certificate
+    const certificateBuffer = cryptoService.decryptFile(account.certificado);
+    const certificatePassword = cryptoService.decrypt(account.senha);
+    
+    // Sign each NFSe cancellation
+    const detalhesComAssinatura = await signAllCancelamentos(
+      data.cancelamento.detalhes,
+      certificateBuffer,
+      certificatePassword
+    );
+    
+    // Update cancelamento with signed details
+    const cancelamentoData = {
+      cabecalho: data.cancelamento.cabecalho,
+      detalhes: detalhesComAssinatura,
+    };
+    
+    // Build XML
+    const xmlWithoutSignature = xmlBuilder.buildPedidoCancelamentoNFe(cancelamentoData, '');
+    
+    // Sign the complete XML
+    const batchSignature = signatureService.signXMLBatchSync(
+      xmlWithoutSignature,
+      certificateBuffer,
+      certificatePassword
+    );
+    
+    // Build final XML with signature
+    const signedXml = xmlBuilder.buildPedidoCancelamentoNFe(cancelamentoData, batchSignature);
+    
+    // Log the signed XML for debugging
+    debuglog('=== XML de Cancelamento Assinado ===');
+    debuglog(signedXml);
+    debuglog('=== Tamanho total do XML:', signedXml.length, 'bytes ===');
+    
+    // Determine environment
+    const isProduction = !isTest;
+    
+    // Send to web service with certificate for mTLS authentication
+    const soapResult = await soapClient.cancelamentoNFe(
+      signedXml, 
+      1, 
+      isProduction,
+      certificateBuffer,
+      certificatePassword
+    );
+
+    const soapPayload = data.includeSoap
+      ? buildSoapPayload(soapResult.soap)
+      : undefined;
+    
+    return {
+      success: true,
+      layoutVersion: data.layoutVersion,
+      resultado: soapResult.parsed,
+      ...(soapPayload && { soap: soapPayload }),
+    };
+  } catch (error) {
+    throw new Error(`Erro ao cancelar NFS-e: ${error.message}`);
+  }
+}
+
+/**
+ * Signs all NFSe cancellations
+ * @param {Array} detalhes - List of NFSe details to cancel
+ * @param {Buffer} certificateBuffer - Certificate buffer
+ * @param {string} certificatePassword - Certificate password
+ * @returns {Array} Details list with signatures
+ */
+async function signAllCancelamentos(detalhes, certificateBuffer, certificatePassword) {
+  const detalhesAssinados = [];
+  
+  for (const detalhe of detalhes) {
+    // Sign the cancellation
+    const assinatura = signatureService.signCancelamento(
+      detalhe.chaveNFe,
+      certificateBuffer,
+      certificatePassword
+    );
+    
+    // Add signature to detail
+    detalhesAssinados.push({
+      chaveNFe: detalhe.chaveNFe,
+      assinaturaCancelamento: assinatura,
+    });
+  }
+  
+  return detalhesAssinados;
+}
+
+/**
+ * Validates cancellation data
+ * @param {Object} cancelamento - Cancellation data
+ * @throws {Error} If validation fails
+ */
+function validateCancelamentoData(cancelamento) {
+  if (!cancelamento) {
+    throw new Error('Dados de cancelamento são obrigatórios');
+  }
+  
+  // Validate header
+  if (!cancelamento.cabecalho) {
+    throw new Error('Cabeçalho do cancelamento é obrigatório');
+  }
+  
+  const { cabecalho } = cancelamento;
+  
+  if (!cabecalho.cpfCnpjRemetente) {
+    throw new Error('CPF/CNPJ do remetente é obrigatório');
+  }
+  
+  if (!cabecalho.cpfCnpjRemetente.cnpj && !cabecalho.cpfCnpjRemetente.cpf) {
+    throw new Error('Informe CPF ou CNPJ do remetente');
+  }
+  
+  // Validate details list
+  if (!cancelamento.detalhes || !Array.isArray(cancelamento.detalhes) || cancelamento.detalhes.length === 0) {
+    throw new Error('Lista de detalhes de cancelamento é obrigatória e deve conter ao menos um item');
+  }
+  
+  // Maximum of 50 NFSe per request according to schema
+  if (cancelamento.detalhes.length > 50) {
+    throw new Error('Máximo de 50 NFS-e podem ser canceladas por requisição');
+  }
+  
+  // Validate each detail
+  cancelamento.detalhes.forEach((detalhe, index) => {
+    validateCancelamentoDetalhe(detalhe, index);
+  });
+}
+
+/**
+ * Validates individual cancellation detail
+ * @param {Object} detalhe - Detail data
+ * @param {number} index - Detail index
+ * @throws {Error} If validation fails
+ */
+function validateCancelamentoDetalhe(detalhe, index) {
+  const detalheNum = index + 1;
+  
+  if (!detalhe.chaveNFe) {
+    throw new Error(`Detalhe ${detalheNum}: ChaveNFe é obrigatória`);
+  }
+  
+  if (!detalhe.chaveNFe.inscricaoPrestador) {
+    throw new Error(`Detalhe ${detalheNum}: Inscrição do prestador é obrigatória`);
+  }
+  
+  if (!detalhe.chaveNFe.numeroNFe) {
+    throw new Error(`Detalhe ${detalheNum}: Número da NFS-e é obrigatório`);
+  }
+}
+
 module.exports = {
   enviarLoteRps,
   testarEnvioLoteRps,
   consultarSituacaoLote,
   enviarRpsSincrono,
+  cancelarNFe,
   SUPPORTED_LAYOUT_VERSION,
 };

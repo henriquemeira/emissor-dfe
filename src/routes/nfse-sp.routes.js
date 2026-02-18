@@ -80,4 +80,39 @@ router.post('/teste-envio-lote-rps', authenticateApiKey, nfseSpController.testar
  */
 router.post('/consulta-situacao-lote', authenticateApiKey, nfseSpController.consultarSituacaoLote);
 
+/**
+ * POST /cancelamento-nfe
+ * Cancels one or more NFSe
+ * 
+ * Request body:
+ * {
+ *   "layoutVersion": "v01-1",
+ *   "ambiente": "teste" | "producao",  // opcional, padrão: teste
+ *   "cancelamento": {
+ *     "cabecalho": {
+ *       "cpfCnpjRemetente": {
+ *         "cnpj": "12345678901234"  // ou "cpf": "12345678901"
+ *       },
+ *       "transacao": true  // opcional, padrão: true
+ *     },
+ *     "detalhes": [
+ *       {
+ *         "chaveNFe": {
+ *           "inscricaoPrestador": 12345678,
+ *           "numeroNFe": 123456,
+ *           "codigoVerificacao": "ABCD1234"  // opcional
+ *         }
+ *       }
+ *       // ... até 50 NFS-e
+ *     ]
+ *   }
+ * }
+ * 
+ * Notes:
+ * - transacao true: Todas as NFS-e só serão canceladas se não ocorrer erro em nenhuma
+ * - transacao false: NFS-e aptas serão canceladas mesmo com erros em outras
+ * - Máximo de 50 NFS-e por requisição
+ */
+router.post('/cancelamento-nfe', authenticateApiKey, nfseSpController.cancelarNFe);
+
 module.exports = router;
