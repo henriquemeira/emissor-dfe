@@ -19,6 +19,7 @@ function signRPS(rpsData, certificateBuffer, password) {
   try {
     // Build the string to be signed (86 characters according to spec)
     const stringToSign = buildRPSStringToSign(rpsData);
+
     
     // Get private key from certificate
     const privateKey = getPrivateKey(certificateBuffer, password);
@@ -30,14 +31,17 @@ function signRPS(rpsData, certificateBuffer, password) {
     const signature = privateKey.sign(md);
     
     // Return base64 encoded signature
-    return forge.util.encode64(signature);
+    const signatureBase64 = forge.util.encode64(signature);
+
+
+    return signatureBase64;
   } catch (error) {
     throw new Error(`Erro ao assinar RPS: ${error.message}`);
   }
 }
 
 /**
- * Builds the 86-character string for RPS signature
+ * Builds the RPS signature string
  * Format:
  * - Inscrição Municipal (CCM) - 8 characters (zero-padded left)
  * - Série do RPS - 5 characters (space-padded right)
@@ -49,10 +53,14 @@ function signRPS(rpsData, certificateBuffer, password) {
  * - Valor dos Serviços - 15 characters (no separators)
  * - Valor das Deduções - 15 characters (no separators)
  * - Código do Serviço - 5 characters
+ * - Indicador de CPF/CNPJ - 1 character (1=CPF, 2=CNPJ, 3=Não informado)
  * - CPF/CNPJ do Tomador - 14 characters (zero-padded left)
+ * - Indicador de CPF/CNPJ do Intermediario - 1 character (1=CPF, 2=CNPJ, 3=Nao informado)
+ * - CPF/CNPJ do Intermediario - 14 characters (zero-padded left)
+ * - ISS Retido Intermediario - 1 character (S/N)
  * 
  * @param {Object} rpsData - RPS data
- * @returns {string} 86-character string
+ * @returns {string} Signature string (86 or 102 characters)
  */
 function buildRPSStringToSign(rpsData) {
   // 1. Inscrição Municipal (8 characters)
@@ -85,17 +93,48 @@ function buildRPSStringToSign(rpsData) {
   // 10. Código do Serviço (5 characters)
   const codigoServico = rpsData.codigoServico.toString().padStart(5, '0');
   
-  // 11. CPF/CNPJ do Tomador (14 characters)
-  let cpfCnpjTomador = '00000000000000'; // Default if not informed
+  // 11. Indicador de CPF/CNPJ (1 character: 1=CPF, 2=CNPJ, 3=Não informado)
+  let indicadorCpfCnpj = '3'; // Default: não informado
+  let cpfCnpjTomador = '00000000000000';
   if (rpsData.cpfCnpjTomador) {
     if (rpsData.cpfCnpjTomador.cnpj) {
+      indicadorCpfCnpj = '2';
       cpfCnpjTomador = rpsData.cpfCnpjTomador.cnpj.padStart(14, '0');
     } else if (rpsData.cpfCnpjTomador.cpf) {
+      indicadorCpfCnpj = '1';
       cpfCnpjTomador = rpsData.cpfCnpjTomador.cpf.padStart(14, '0');
     }
   }
   
-  // Build the 86-character string
+  // 13-15. Intermediario (optional; include only when present)
+  const hasIntermediario = Boolean(rpsData.cpfCnpjIntermediario) ||
+    rpsData.issRetidoIntermediario === true ||
+    rpsData.issRetidoIntermediario === false ||
+    (typeof rpsData.issRetidoIntermediario === 'string' && rpsData.issRetidoIntermediario.trim() !== '');
+
+  let indicadorCpfCnpjIntermediario = '3';
+  let cpfCnpjIntermediario = '00000000000000';
+  if (rpsData.cpfCnpjIntermediario) {
+    if (rpsData.cpfCnpjIntermediario.cnpj) {
+      indicadorCpfCnpjIntermediario = '2';
+      cpfCnpjIntermediario = rpsData.cpfCnpjIntermediario.cnpj.padStart(14, '0');
+    } else if (rpsData.cpfCnpjIntermediario.cpf) {
+      indicadorCpfCnpjIntermediario = '1';
+      cpfCnpjIntermediario = rpsData.cpfCnpjIntermediario.cpf.padStart(14, '0');
+    }
+  }
+
+  let issRetidoIntermediario = 'N';
+  if (typeof rpsData.issRetidoIntermediario === 'string') {
+    const normalized = rpsData.issRetidoIntermediario.toUpperCase();
+    if (normalized === 'S' || normalized === 'N') {
+      issRetidoIntermediario = normalized;
+    }
+  } else if (rpsData.issRetidoIntermediario === true) {
+    issRetidoIntermediario = 'S';
+  }
+
+  // Build the signature string
   const stringToSign = 
     inscricao +           // 8
     serie +               // 5
@@ -107,12 +146,12 @@ function buildRPSStringToSign(rpsData) {
     valorServicos +       // 15
     valorDeducoes +       // 15
     codigoServico +       // 5
-    cpfCnpjTomador;       // 14
-  // Total: 86
-  
-  if (stringToSign.length !== 86) {
-    throw new Error(`String de assinatura inválida. Esperado 86 caracteres, obtido ${stringToSign.length}`);
-  }
+    indicadorCpfCnpj +    // 1
+    cpfCnpjTomador +      // 14
+    (hasIntermediario
+      ? indicadorCpfCnpjIntermediario + cpfCnpjIntermediario + issRetidoIntermediario
+      : '');
+  // Total: 86 (sem intermediario) ou 102 (com intermediario)
   
   return stringToSign;
 }
@@ -152,9 +191,11 @@ function signXMLBatch(xml, certificateBuffer, password) {
       privateKey: privateKeyPem,
     });
     
-    // Add reference to the document
+    // Add reference to the document (root element only)
     sig.addReference({
-      xpath: '//*',
+      xpath: '/*',
+      uri: '',
+      isEmptyUri: true,
       digestAlgorithm: 'http://www.w3.org/2000/09/xmldsig#sha1',
       transforms: [
         'http://www.w3.org/2000/09/xmldsig#enveloped-signature',
@@ -175,7 +216,7 @@ function signXMLBatch(xml, certificateBuffer, password) {
     
     sig.keyInfoProvider = {
       getKeyInfo: () => {
-        return `<X509Data><X509Certificate>${certBase64}</X509Certificate></X509Data>`;
+        return `<KeyInfo><X509Data><X509Certificate>${certBase64}</X509Certificate></X509Data></KeyInfo>`;
       },
     };
     
@@ -186,7 +227,7 @@ function signXMLBatch(xml, certificateBuffer, password) {
     const signatureXml = sig.getSignatureXml();
     
     // Parse signature XML to return as object structure
-    return parseSignatureXml(signatureXml);
+    return parseSignatureXml(signatureXml, certBase64);
   } catch (error) {
     throw new Error(`Erro ao assinar lote XML: ${error.message}`);
   }
@@ -195,12 +236,17 @@ function signXMLBatch(xml, certificateBuffer, password) {
 /**
  * Parses signature XML string into object structure
  * @param {string} signatureXml - Signature XML string
- * @returns {Object} Parsed signature object
+ * @returns {string} Signature XML
  */
-function parseSignatureXml(signatureXml) {
-  // For now, return the raw signature XML as a string
-  // The xml-builder will handle inserting it correctly
-  return signatureXml;
+function parseSignatureXml(signatureXml, certBase64) {
+  let finalSignature = signatureXml;
+
+  if (!finalSignature.includes('<KeyInfo>')) {
+    const keyInfoXml = `<KeyInfo><X509Data><X509Certificate>${certBase64}</X509Certificate></X509Data></KeyInfo>`;
+    finalSignature = finalSignature.replace('</Signature>', `${keyInfoXml}</Signature>`);
+  }
+
+  return finalSignature;
 }
 
 /**

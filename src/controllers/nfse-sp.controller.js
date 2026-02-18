@@ -13,6 +13,7 @@ async function enviarLoteRps(req, res, next) {
     const { layoutVersion, lote } = req.body;
     const apiKey = req.apiKey; // From authentication middleware
     const isTest = req.body.ambiente === 'teste' || req.body.ambiente === 'test';
+    const includeSoap = req.query.includeSoap !== 'false' && req.body.includeSoap !== false;
     
     // Validate layout version
     if (!layoutVersion) {
@@ -48,7 +49,7 @@ async function enviarLoteRps(req, res, next) {
     
     // Call service
     const result = await nfseSpService.enviarLoteRps(
-      { layoutVersion, lote },
+      { layoutVersion, lote, includeSoap },
       apiKey,
       isTest
     );
@@ -71,6 +72,7 @@ async function testarEnvioLoteRps(req, res, next) {
   try {
     const { layoutVersion, lote } = req.body;
     const apiKey = req.apiKey; // From authentication middleware
+    const includeSoap = req.query.includeSoap === 'true' || req.body.includeSoap === true;
     
     // Validate layout version
     if (!layoutVersion) {
@@ -106,7 +108,7 @@ async function testarEnvioLoteRps(req, res, next) {
     
     // Call service
     const result = await nfseSpService.testarEnvioLoteRps(
-      { layoutVersion, lote },
+      { layoutVersion, lote, includeSoap },
       apiKey
     );
     

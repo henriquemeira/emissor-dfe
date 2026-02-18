@@ -315,7 +315,11 @@ A assinatura dos RPS segue especificação da Prefeitura de São Paulo:
 8. Valor dos Serviços (15 posições, sem separadores)
 9. Valor das Deduções (15 posições, sem separadores)
 10. Código do Serviço (5 posições, zeros à esquerda)
-11. CPF/CNPJ do Tomador (14 posições, zeros à esquerda)
+11. Indicador de CPF/CNPJ do Tomador (1 posição: 1=CPF, 2=CNPJ, 3=Não informado)
+12. CPF/CNPJ do Tomador (14 posições, zeros à esquerda)
+13. Indicador de CPF/CNPJ do intermediário (1 posição: 1=CPF, 2=CNPJ, 3=Não informado)
+14. CPF/CNPJ do do intermediário (14 posições, zeros à esquerda)
+15. ISS Retido Intermediário (1 posição: S ou N)
 
 **Total: 86 caracteres**
 

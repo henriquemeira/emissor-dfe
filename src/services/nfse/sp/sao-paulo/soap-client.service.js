@@ -1,5 +1,20 @@
 const axios = require('axios');
 const xml2js = require('xml2js');
+const https = require('https');
+
+const DEBUG_NFSE_SP = process.env.NFSE_SP_DEBUG === 'true';
+
+function logDebug(message, ...args) {
+  if (DEBUG_NFSE_SP) {
+    console.log(message, ...args);
+  }
+}
+
+function logErrorDebug(message, ...args) {
+  if (DEBUG_NFSE_SP) {
+    console.error(message, ...args);
+  }
+}
 
 /**
  * SOAP Client Service for São Paulo NFS-e
@@ -20,9 +35,11 @@ const ENDPOINTS = {
  * @param {string} xml - Signed XML (PedidoEnvioLoteRPS)
  * @param {number} versaoSchema - Schema version (1 for v01-1)
  * @param {boolean} isProduction - Whether to use production endpoint
+ * @param {Buffer} certificateBuffer - Certificate PFX buffer for mTLS authentication
+ * @param {string} certificatePassword - Certificate password
  * @returns {Object} Parsed response from web service
  */
-async function envioLoteRpsAsync(xml, versaoSchema = 1, isProduction = false) {
+async function envioLoteRpsAsync(xml, versaoSchema = 1, isProduction = false, certificateBuffer = null, certificatePassword = null) {
   try {
     // Build SOAP envelope
     const soapEnvelope = buildSoapEnvelope('EnvioLoteRPS', xml, versaoSchema);
@@ -30,29 +47,68 @@ async function envioLoteRpsAsync(xml, versaoSchema = 1, isProduction = false) {
     // Get endpoint
     const endpoint = isProduction ? ENDPOINTS.production : ENDPOINTS.test;
     
-    // Send SOAP request
-    const response = await axios.post(endpoint, soapEnvelope, {
+    
+    // Configure HTTPS agent with client certificate if provided
+    const requestConfig = {
       headers: {
         'Content-Type': 'text/xml; charset=utf-8',
         'SOAPAction': 'http://www.prefeitura.sp.gov.br/nfe/ws/envioLoteRPSAsync',
       },
       timeout: 60000, // 60 seconds timeout
-    });
+      validateStatus: () => true, // Accept any status code to handle manually
+    };
+    
+    // Add client certificate for mTLS if provided
+    if (certificateBuffer && certificatePassword) {
+      requestConfig.httpsAgent = new https.Agent({
+        pfx: certificateBuffer,
+        passphrase: certificatePassword,
+        rejectUnauthorized: true, // Validate server certificate
+      });
+    }
+    
+    // Send SOAP request
+    const response = await axios.post(endpoint, soapEnvelope, requestConfig);
+    
+    
+    // Check for HTTP errors
+    if (response.status >= 400) {
+      logErrorDebug('Erro HTTP:', response.status, response.statusText);
+      
+      // Throw specific error for common HTTP errors
+      if (response.status === 403) {
+        throw new Error('Acesso negado (403). Verifique se o certificado digital está configurado corretamente e se tem permissão para acessar o serviço.');
+      } else if (response.status === 401) {
+        throw new Error('Não autorizado (401). Verifique as credenciais de autenticação.');
+      } else if (response.status === 404) {
+        throw new Error('Serviço não encontrado (404). Verifique a URL do endpoint.');
+      } else if (response.status >= 500) {
+        throw new Error(`Erro interno do servidor (${response.status}). Tente novamente mais tarde.`);
+      } else {
+        throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+      }
+    }
     
     // Parse SOAP response
     const parsedResponse = await parseSoapResponse(response.data);
     
-    return parsedResponse;
+    return {
+      parsed: parsedResponse,
+      soap: {
+        request: soapEnvelope,
+        response: response.data,
+      },
+    };
   } catch (error) {
     if (error.response) {
       // Server responded with error
-      const parsedError = await parseSoapResponse(error.response.data);
-      throw new Error(`Erro do servidor: ${JSON.stringify(parsedError)}`);
+      logErrorDebug('Erro na resposta do servidor:', error.response.status);
+      throw new Error(`Erro do servidor (${error.response.status}): ${error.message}`);
     } else if (error.request) {
       // Request was made but no response
       throw new Error('Sem resposta do servidor. Verifique a conexão.');
     } else {
-      // Error in request setup
+      // Error in request setup or parsing
       throw new Error(`Erro ao enviar requisição: ${error.message}`);
     }
   }
@@ -63,9 +119,11 @@ async function envioLoteRpsAsync(xml, versaoSchema = 1, isProduction = false) {
  * @param {string} xml - Signed XML (PedidoEnvioLoteRPS)
  * @param {number} versaoSchema - Schema version (1 for v01-1)
  * @param {boolean} isProduction - Whether to use production endpoint
+ * @param {Buffer} certificateBuffer - Certificate PFX buffer for mTLS authentication
+ * @param {string} certificatePassword - Certificate password
  * @returns {Object} Parsed response from web service
  */
-async function testeEnvioLoteRpsAsync(xml, versaoSchema = 1, isProduction = false) {
+async function testeEnvioLoteRpsAsync(xml, versaoSchema = 1, isProduction = false, certificateBuffer = null, certificatePassword = null) {
   try {
     // Build SOAP envelope
     const soapEnvelope = buildSoapEnvelope('TesteEnvioLoteRPS', xml, versaoSchema);
@@ -73,23 +131,62 @@ async function testeEnvioLoteRpsAsync(xml, versaoSchema = 1, isProduction = fals
     // Get endpoint
     const endpoint = isProduction ? ENDPOINTS.production : ENDPOINTS.test;
     
-    // Send SOAP request
-    const response = await axios.post(endpoint, soapEnvelope, {
+    
+    // Configure HTTPS agent with client certificate if provided
+    const requestConfig = {
       headers: {
         'Content-Type': 'text/xml; charset=utf-8',
         'SOAPAction': 'http://www.prefeitura.sp.gov.br/nfe/ws/testeEnvioLoteRPSAsync',
       },
       timeout: 60000,
-    });
+      validateStatus: () => true, // Accept any status code to handle manually
+    };
+    
+    // Add client certificate for mTLS if provided
+    if (certificateBuffer && certificatePassword) {
+      requestConfig.httpsAgent = new https.Agent({
+        pfx: certificateBuffer,
+        passphrase: certificatePassword,
+        rejectUnauthorized: true, // Validate server certificate
+      });
+    }
+    
+    // Send SOAP request
+    const response = await axios.post(endpoint, soapEnvelope, requestConfig);
+    
+    
+    // Check for HTTP errors
+    if (response.status >= 400) {
+      logErrorDebug('Erro HTTP:', response.status, response.statusText);
+      
+      // Throw specific error for common HTTP errors
+      if (response.status === 403) {
+        throw new Error('Acesso negado (403). Verifique se o certificado digital está configurado corretamente e se tem permissão para acessar o serviço.');
+      } else if (response.status === 401) {
+        throw new Error('Não autorizado (401). Verifique as credenciais de autenticação.');
+      } else if (response.status === 404) {
+        throw new Error('Serviço não encontrado (404). Verifique a URL do endpoint.');
+      } else if (response.status >= 500) {
+        throw new Error(`Erro interno do servidor (${response.status}). Tente novamente mais tarde.`);
+      } else {
+        throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+      }
+    }
     
     // Parse SOAP response
     const parsedResponse = await parseSoapResponse(response.data);
     
-    return parsedResponse;
+    return {
+      parsed: parsedResponse,
+      soap: {
+        request: soapEnvelope,
+        response: response.data,
+      },
+    };
   } catch (error) {
     if (error.response) {
-      const parsedError = await parseSoapResponse(error.response.data);
-      throw new Error(`Erro do servidor: ${JSON.stringify(parsedError)}`);
+      logErrorDebug('Erro na resposta do servidor:', error.response.status);
+      throw new Error(`Erro do servidor (${error.response.status}): ${error.message}`);
     } else if (error.request) {
       throw new Error('Sem resposta do servidor. Verifique a conexão.');
     } else {
@@ -106,18 +203,28 @@ async function testeEnvioLoteRpsAsync(xml, versaoSchema = 1, isProduction = fals
  * @returns {string} SOAP envelope XML
  */
 function buildSoapEnvelope(operationName, xml, versaoSchema) {
-  // Escape XML for inclusion in SOAP body
-  const escapedXml = escapeXml(xml);
+  // Remove XML declaration from the payload if present
+  // The SOAP envelope already has its own declaration
+  let cleanXml = xml.trim();
+  if (cleanXml.startsWith('<?xml')) {
+    cleanXml = cleanXml.replace(/<\?xml[^?]*\?>\s*/i, '');
+    logDebug('Removida declaracao XML do payload.');
+  }
   
-  return `<?xml version="1.0" encoding="utf-8"?>
+  
+  // Use CDATA to include XML without escaping
+  const envelope = `<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://www.prefeitura.sp.gov.br/nfe">
   <soap:Body>
     <tns:${operationName}Request>
-      <versaoSchema>${versaoSchema}</versaoSchema>
-      <MensagemXML>${escapedXml}</MensagemXML>
+      <tns:versaoSchema>${versaoSchema}</tns:versaoSchema>
+      <tns:MensagemXML><![CDATA[${cleanXml}]]></tns:MensagemXML>
     </tns:${operationName}Request>
   </soap:Body>
 </soap:Envelope>`;
+
+  
+  return envelope;
 }
 
 /**
@@ -141,6 +248,7 @@ function escapeXml(xml) {
  */
 async function parseSoapResponse(soapXml) {
   try {
+    
     const parser = new xml2js.Parser({
       explicitArray: false,
       ignoreAttrs: false,
@@ -149,9 +257,21 @@ async function parseSoapResponse(soapXml) {
     
     const result = await parser.parseStringPromise(soapXml);
     
-    // Navigate SOAP structure
-    const body = result.Envelope?.Body;
+    
+    // Navigate SOAP structure - try different possible structures
+    let body = result.Envelope?.Body;
+    
+    // If not found, try without stripping prefix (in case the parser didn't work as expected)
+    if (!body && result['soap:Envelope']) {
+      body = result['soap:Envelope']['soap:Body'];
+    }
+    
+    if (!body && result['soapenv:Envelope']) {
+      body = result['soapenv:Envelope']['soapenv:Body'];
+    }
+    
     if (!body) {
+      logErrorDebug('SOAP Body não encontrado. Estrutura recebida:', JSON.stringify(result, null, 2));
       throw new Error('SOAP Body não encontrado na resposta');
     }
     

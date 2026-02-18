@@ -8,13 +8,13 @@ const xml2js = require('xml2js');
 /**
  * Builds the PedidoEnvioLoteRPS XML structure
  * @param {Object} data - Batch data containing header and RPS list
- * @param {string} signature - Digital signature of the batch
+ * @param {string} signature - Digital signature of the batch (XML string)
  * @returns {string} XML string
  */
 function buildPedidoEnvioLoteRPS(data, signature) {
   const { cabecalho, rps } = data;
 
-  // Build XML object structure according to schema
+  // Build XML object structure according to schema (without signature)
   const xmlObject = {
     'PedidoEnvioLoteRPS': {
       '$': {
@@ -25,6 +25,7 @@ function buildPedidoEnvioLoteRPS(data, signature) {
       'Cabecalho': [{
         '$': {
           'Versao': '1',
+          'xmlns': '',
         },
         'CPFCNPJRemetente': [buildCPFCNPJ(cabecalho.cpfCnpjRemetente)],
         'transacao': [cabecalho.transacao !== undefined ? cabecalho.transacao : true],
@@ -36,8 +37,10 @@ function buildPedidoEnvioLoteRPS(data, signature) {
           'ValorTotalDeducoes': [formatValor(cabecalho.valorTotalDeducoes)],
         }),
       }],
-      'RPS': rps.map(buildRPS),
-      'ds:Signature': [buildSignature(signature)],
+      'RPS': rps.map((rpsItem) => ({
+        '$': { 'xmlns': '' },
+        ...buildRPS(rpsItem),
+      })),
     },
   };
 
@@ -46,7 +49,17 @@ function buildPedidoEnvioLoteRPS(data, signature) {
     renderOpts: { pretty: false },
   });
 
-  return builder.buildObject(xmlObject);
+  let xmlString = builder.buildObject(xmlObject);
+  
+  // If signature is provided, insert it before closing tag
+  if (signature && signature.trim()) {
+    // Remove the closing tag
+    xmlString = xmlString.replace('</PedidoEnvioLoteRPS>', '');
+    // Add signature and closing tag
+    xmlString += signature + '</PedidoEnvioLoteRPS>';
+  }
+  
+  return xmlString;
 }
 
 /**

@@ -3,6 +3,7 @@ const signatureService = require('./signature.service');
 const soapClient = require('./soap-client.service');
 const storageService = require('../../../storage.service');
 const cryptoService = require('../../../crypto.service');
+const zlib = require('zlib');
 
 /**
  * Main service for São Paulo NFS-e operations (v01-1)
@@ -10,6 +11,24 @@ const cryptoService = require('../../../crypto.service');
  */
 
 const SUPPORTED_LAYOUT_VERSION = 'v01-1';
+
+function buildSoapPayload(soap) {
+  const requestBuffer = zlib.gzipSync(soap.request, { level: 9 });
+  const responseBuffer = zlib.gzipSync(soap.response, { level: 9 });
+
+  return {
+    compression: 'gzip',
+    encoding: 'base64',
+    request: requestBuffer.toString('base64'),
+    response: responseBuffer.toString('base64'),
+    sizes: {
+      requestBytes: Buffer.byteLength(soap.request, 'utf8'),
+      responseBytes: Buffer.byteLength(soap.response, 'utf8'),
+      requestCompressedBytes: requestBuffer.length,
+      responseCompressedBytes: responseBuffer.length,
+    },
+  };
+}
 
 /**
  * Sends a batch of RPS for emission
@@ -31,14 +50,14 @@ async function enviarLoteRps(data, apiKey, isTest = false) {
     validateLoteData(data.lote);
     
     // Get certificate from storage
-    const account = await storageService.getAccount(apiKey);
-    if (!account || !account.certificate) {
+    const account = await storageService.loadAccount(apiKey);
+    if (!account || !account.certificado) {
       throw new Error('Certificado não encontrado para esta API Key');
     }
     
     // Decrypt certificate
-    const certificateBuffer = cryptoService.decryptFile(account.certificate.encrypted);
-    const certificatePassword = account.certificate.password;
+    const certificateBuffer = cryptoService.decryptFile(account.certificado);
+    const certificatePassword = cryptoService.decrypt(account.senha);
     
     // Sign each RPS
     const rpsWithSignatures = await signAllRPS(
@@ -66,16 +85,34 @@ async function enviarLoteRps(data, apiKey, isTest = false) {
     // Build final XML with signature
     const signedXml = xmlBuilder.buildPedidoEnvioLoteRPS(loteData, batchSignature);
     
-    // Determine environment
-    const isProduction = !isTest && account.environment === 'production';
+    // Log the signed XML for debugging
+    console.log('=== XML Assinado ===');
+    console.log(signedXml);
+    //console.log('=== XML Assinado (últimos 5000 chars) ===');
+    //console.log(signedXml.substring(signedXml.length - 5000));
+    console.log('=== Tamanho total do XML:', signedXml.length, 'bytes ===');
     
-    // Send to web service
-    const response = await soapClient.envioLoteRpsAsync(signedXml, 1, isProduction);
+    // Determine environment
+    const isProduction = !isTest;
+    
+    // Send to web service with certificate for mTLS authentication
+    const soapResult = await soapClient.envioLoteRpsAsync(
+      signedXml, 
+      1, 
+      isProduction,
+      certificateBuffer,
+      certificatePassword
+    );
+
+    const soapPayload = data.includeSoap
+      ? buildSoapPayload(soapResult.soap)
+      : undefined;
     
     return {
       success: true,
       layoutVersion: data.layoutVersion,
-      resultado: response,
+      resultado: soapResult.parsed,
+      ...(soapPayload && { soap: soapPayload }),
     };
   } catch (error) {
     throw new Error(`Erro ao enviar lote de RPS: ${error.message}`);
@@ -99,14 +136,14 @@ async function testarEnvioLoteRps(data, apiKey) {
     validateLoteData(data.lote);
     
     // Get certificate from storage
-    const account = await storageService.getAccount(apiKey);
-    if (!account || !account.certificate) {
+    const account = await storageService.loadAccount(apiKey);
+    if (!account || !account.certificado) {
       throw new Error('Certificado não encontrado para esta API Key');
     }
     
     // Decrypt certificate
-    const certificateBuffer = cryptoService.decryptFile(account.certificate.encrypted);
-    const certificatePassword = account.certificate.password;
+    const certificateBuffer = cryptoService.decryptFile(account.certificado);
+    const certificatePassword = cryptoService.decrypt(account.senha);
     
     // Sign each RPS
     const rpsWithSignatures = await signAllRPS(
@@ -134,13 +171,31 @@ async function testarEnvioLoteRps(data, apiKey) {
     // Build final XML with signature
     const signedXml = xmlBuilder.buildPedidoEnvioLoteRPS(loteData, batchSignature);
     
-    // Send to test web service
-    const response = await soapClient.testeEnvioLoteRpsAsync(signedXml, 1, false);
+    // Log the signed XML for debugging
+    console.log('=== XML Assinado ===');
+    console.log(signedXml);
+    //console.log('=== XML Assinado (últimos 500 chars) ===');
+    //console.log(signedXml.substring(signedXml.length - 500));
+    console.log('=== Tamanho total do XML:', signedXml.length, 'bytes ===');
+    
+    // Send to test web service with certificate for mTLS authentication
+    const soapResult = await soapClient.testeEnvioLoteRpsAsync(
+      signedXml, 
+      1, 
+      false,
+      certificateBuffer,
+      certificatePassword
+    );
+
+    const soapPayload = data.includeSoap
+      ? buildSoapPayload(soapResult.soap)
+      : undefined;
     
     return {
       success: true,
       layoutVersion: data.layoutVersion,
-      resultado: response,
+      resultado: soapResult.parsed,
+      ...(soapPayload && { soap: soapPayload }),
     };
   } catch (error) {
     throw new Error(`Erro ao testar envio de lote de RPS: ${error.message}`);
