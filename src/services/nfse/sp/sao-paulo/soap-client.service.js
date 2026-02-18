@@ -291,7 +291,7 @@ async function consultaSituacaoLote(xml, versaoSchema = 1, isProduction = false,
     const soapEnvelope = buildSoapEnvelope('ConsultaSituacaoLote', xml, versaoSchema);
     logDebug('SOAP request ConsultaSituacaoLote:', soapEnvelope);
 
-    const endpoint = isProduction ? ENDPOINTS.production : ENDPOINTS.test;
+    const endpoint = isProduction ? ENDPOINTS.async.production : ENDPOINTS.async.test;
 
     const requestConfig = {
       headers: {
