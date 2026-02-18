@@ -568,7 +568,7 @@ Contribuições são bem-vindas! Por favor:
     - [x] Layout v01-1 (assíncrono)
     - [x] Assinatura digital (RPS + XML-DSig)
     - [x] Documentação completa
-    - [ ] EnvioRps (envio individual)
+    - [x] EnvioRps (envio individual)
   - [x] Consulta de situação do lote
   - [ ] Cancelamento de NFS-e
   - [ ] Consulta de guia de recolhimento
