@@ -507,8 +507,9 @@ function parseRetornoConsultaSituacaoLote(retorno) {
     const situacaoValue = root.Situacao._ || root.Situacao;
     const situacaoNome = root.Situacao.$ ? root.Situacao.$.nome : null;
     
+    const codigo = parseInt(situacaoValue, 10);
     response.situacao = {
-      codigo: parseInt(situacaoValue, 10),
+      codigo: isNaN(codigo) ? null : codigo,
       nome: situacaoNome,
     };
   }
