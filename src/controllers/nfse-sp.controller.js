@@ -5,12 +5,13 @@ const nfseSpService = require('../services/nfse/sp/sao-paulo/nfse-sp.service');
  */
 
 /**
- * Sends a batch of RPS for emission (EnvioLoteRpsAsync)
+ * Sends a batch of RPS for emission (EnvioLoteRpsAsync or EnvioRPS)
+ * Supports both synchronous and asynchronous methods
  * POST /api/v1/nfse/sp/sao-paulo/envio-lote-rps
  */
 async function enviarLoteRps(req, res, next) {
   try {
-    const { layoutVersion, lote } = req.body;
+    const { layoutVersion, lote, metodo } = req.body;
     const apiKey = req.apiKey; // From authentication middleware
     const isTest = req.body.ambiente === 'teste' || req.body.ambiente === 'test';
     const includeSoap = req.query.includeSoap !== 'false' && req.body.includeSoap !== false;
@@ -47,12 +48,56 @@ async function enviarLoteRps(req, res, next) {
       });
     }
     
-    // Call service
-    const result = await nfseSpService.enviarLoteRps(
-      { layoutVersion, lote, includeSoap },
-      apiKey,
-      isTest
-    );
+    // Validate metodo parameter
+    const metodoValue = metodo ? metodo.toLowerCase() : 'assincrono';
+    if (metodoValue !== 'sincrono' && metodoValue !== 'assincrono') {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'INVALID_METODO',
+          message: 'Campo metodo deve ser "sincrono" ou "assincrono"',
+        },
+      });
+    }
+    
+    // If synchronous method, validate that only 1 RPS is being sent
+    if (metodoValue === 'sincrono') {
+      if (!lote.rps || !Array.isArray(lote.rps)) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            code: 'MISSING_RPS',
+            message: 'Lista de RPS é obrigatória',
+          },
+        });
+      }
+      
+      if (lote.rps.length !== 1) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            code: 'INVALID_RPS_COUNT_SYNC',
+            message: 'Método síncrono aceita apenas um único RPS. Para envio de múltiplos RPS, utilize o método assíncrono.',
+          },
+        });
+      }
+    }
+    
+    // Call appropriate service method based on metodo
+    let result;
+    if (metodoValue === 'sincrono') {
+      result = await nfseSpService.enviarRpsSincrono(
+        { layoutVersion, lote, includeSoap },
+        apiKey,
+        isTest
+      );
+    } else {
+      result = await nfseSpService.enviarLoteRps(
+        { layoutVersion, lote, includeSoap },
+        apiKey,
+        isTest
+      );
+    }
     
     return res.status(200).json({
       success: true,
