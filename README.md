@@ -33,7 +33,8 @@ API middleware para emissão simplificada de documentos fiscais eletrônicos bra
   - ✅ Suporte ao layout v01-1 (assíncrono)
   - ✅ Assinatura digital de RPS e XML
   - ✅ Validação conforme XSD oficial
-  - 📅 Consulta de situação do lote (planejado)
+  - ✅ Consulta de situação do lote
+  - 📅 Cancelamento de NFS-e (planejado)
   - 📅 Consulta de guia (planejado)
 
 **Fase 3** - 📅 Planejado
@@ -567,7 +568,8 @@ Contribuições são bem-vindas! Por favor:
     - [x] Layout v01-1 (assíncrono)
     - [x] Assinatura digital (RPS + XML-DSig)
     - [x] Documentação completa
-  - [ ] Consulta de situação do lote
+  - [x] Consulta de situação do lote
+  - [ ] Cancelamento de NFS-e
   - [ ] Consulta de guia de recolhimento
 - [ ] **Fase 3** - Implementação completa de NF-e
   - [ ] Emissão de NF-e
