@@ -374,9 +374,69 @@ function getCertificateAndKey(certificateBuffer, password) {
   }
 }
 
+/**
+ * Signs cancellation for an individual NFSe according to São Paulo specification
+ * The signature is based on a 20-character string with NFSe information
+ * 
+ * @param {Object} chaveNFe - NFe key data to sign
+ * @param {Buffer} certificateBuffer - Certificate file buffer (PFX/P12)
+ * @param {string} password - Certificate password
+ * @returns {string} Base64 encoded signature
+ */
+function signCancelamento(chaveNFe, certificateBuffer, password) {
+  try {
+    // Build the string to be signed (20 characters according to spec)
+    const stringToSign = buildCancelamentoStringToSign(chaveNFe);
+
+    // Get private key from certificate
+    const privateKey = getPrivateKey(certificateBuffer, password);
+    
+    // Sign the string
+    const md = forge.md.sha1.create();
+    md.update(stringToSign, 'utf8');
+    
+    const signature = privateKey.sign(md);
+    
+    // Return base64 encoded signature
+    const signatureBase64 = forge.util.encode64(signature);
+
+    return signatureBase64;
+  } catch (error) {
+    throw new Error(`Erro ao assinar cancelamento: ${error.message}`);
+  }
+}
+
+/**
+ * Builds the cancellation signature string
+ * Format:
+ * - Inscrição Municipal (CCM) - 8 characters (zero-padded left)
+ * - Número da NFS-e - 12 characters (zero-padded left)
+ * 
+ * @param {Object} chaveNFe - NFe key data
+ * @returns {string} Signature string (20 characters)
+ */
+function buildCancelamentoStringToSign(chaveNFe) {
+  // 1. Inscrição Municipal (8 characters)
+  const inscricao = chaveNFe.inscricaoPrestador.toString().padStart(8, '0');
+  
+  // 2. Número da NFS-e (12 characters)
+  const numeroNFe = chaveNFe.numeroNFe.toString().padStart(12, '0');
+  
+  const stringToSign = inscricao + numeroNFe;
+  
+  // Validate length
+  if (stringToSign.length !== 20) {
+    throw new Error(`String de assinatura de cancelamento inválida. Esperado 20 caracteres, obtido ${stringToSign.length}`);
+  }
+  
+  return stringToSign;
+}
+
 module.exports = {
   signRPS,
   signXMLBatch,
   signXMLBatchSync,
   buildRPSStringToSign,
+  signCancelamento,
+  buildCancelamentoStringToSign,
 };

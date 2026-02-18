@@ -368,8 +368,83 @@ function buildPedidoConsultaSituacaoLote(data) {
   );
 }
 
+/**
+ * Builds the PedidoCancelamentoNFe XML structure
+ * @param {Object} data - Cancellation data
+ * @param {Object} data.cabecalho - Header data
+ * @param {Object} data.cabecalho.cpfCnpjRemetente - CPF/CNPJ do remetente
+ * @param {boolean} data.cabecalho.transacao - Transaction flag
+ * @param {Array} data.detalhes - Array of NFSe details to cancel
+ * @param {string} signature - Digital signature of the complete XML document
+ * @returns {string} XML string
+ */
+function buildPedidoCancelamentoNFe(data, signature) {
+  const { cabecalho, detalhes } = data;
+
+  // Build XML object structure according to schema
+  const xmlObject = {
+    'PedidoCancelamentoNFe': {
+      '$': {
+        'xmlns': 'http://www.prefeitura.sp.gov.br/nfe',
+        'xmlns:tipos': 'http://www.prefeitura.sp.gov.br/nfe/tipos',
+        'xmlns:ds': 'http://www.w3.org/2000/09/xmldsig#',
+      },
+      'Cabecalho': [{
+        '$': {
+          'Versao': '1',
+          'xmlns': '',
+        },
+        'CPFCNPJRemetente': [buildCPFCNPJ(cabecalho.cpfCnpjRemetente)],
+        'transacao': [cabecalho.transacao !== undefined ? cabecalho.transacao : true],
+      }],
+      'Detalhe': detalhes.map((detalhe) => ({
+        '$': { 'xmlns': '' },
+        'ChaveNFe': [buildChaveNFe(detalhe.chaveNFe)],
+        'AssinaturaCancelamento': [detalhe.assinaturaCancelamento],
+      })),
+    },
+  };
+
+  const builder = new xml2js.Builder({
+    xmldec: { version: '1.0', encoding: 'UTF-8' },
+    renderOpts: { pretty: false },
+  });
+
+  let xmlString = builder.buildObject(xmlObject);
+  
+  // If signature is provided, insert it before closing tag
+  if (signature && signature.trim()) {
+    // Remove the closing tag
+    xmlString = xmlString.replace('</PedidoCancelamentoNFe>', '');
+    // Add signature and closing tag
+    xmlString += signature + '</PedidoCancelamentoNFe>';
+  }
+  
+  return xmlString;
+}
+
+/**
+ * Builds ChaveNFe structure for cancellation
+ * @param {Object} chaveNFe - NFe key data
+ * @returns {Object} XML structure
+ */
+function buildChaveNFe(chaveNFe) {
+  const obj = {
+    'InscricaoPrestador': [chaveNFe.inscricaoPrestador],
+    'NumeroNFe': [chaveNFe.numeroNFe],
+  };
+
+  // CodigoVerificacao is optional
+  if (chaveNFe.codigoVerificacao) {
+    obj['CodigoVerificacao'] = [chaveNFe.codigoVerificacao];
+  }
+
+  return obj;
+}
+
 module.exports = {
   buildPedidoEnvioLoteRPS,
   buildPedidoEnvioRPS,
   buildPedidoConsultaSituacaoLote,
+  buildPedidoCancelamentoNFe,
 };

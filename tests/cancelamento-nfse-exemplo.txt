@@ -1,0 +1,102 @@
+Exemplo de chamada para cancelamento de NFS-e
+
+curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/cancelamento-nfe \
+  -H "X-API-Key: 41b3db5a-692a-463e-b20e-fc9a3637e05c" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "layoutVersion": "v01-1",
+    "ambiente": "teste",
+    "cancelamento": {
+      "cabecalho": {
+        "cpfCnpjRemetente": {
+          "cnpj": "52507723000185"
+        },
+        "transacao": true
+      },
+      "detalhes": [
+        {
+          "chaveNFe": {
+            "inscricaoPrestador": 78709806,
+            "numeroNFe": 123456,
+            "codigoVerificacao": "ABCD1234"
+          }
+        }
+      ]
+    }
+  }'
+
+Exemplo com múltiplas NFS-e:
+
+curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/cancelamento-nfe \
+  -H "X-API-Key: 41b3db5a-692a-463e-b20e-fc9a3637e05c" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "layoutVersion": "v01-1",
+    "ambiente": "teste",
+    "cancelamento": {
+      "cabecalho": {
+        "cpfCnpjRemetente": {
+          "cnpj": "52507723000185"
+        },
+        "transacao": false
+      },
+      "detalhes": [
+        {
+          "chaveNFe": {
+            "inscricaoPrestador": 78709806,
+            "numeroNFe": 123456
+          }
+        },
+        {
+          "chaveNFe": {
+            "inscricaoPrestador": 78709806,
+            "numeroNFe": 123457
+          }
+        }
+      ]
+    }
+  }'
+
+Parâmetros:
+- layoutVersion: Versão do layout (sempre "v01-1")
+- ambiente: "teste" ou "producao"
+- cancelamento.cabecalho.cpfCnpjRemetente: CPF ou CNPJ do remetente
+- cancelamento.cabecalho.transacao: 
+  - true: Todas as NFS-e só serão canceladas se não ocorrer erro em nenhuma (padrão)
+  - false: NFS-e aptas serão canceladas mesmo com erros em outras
+- cancelamento.detalhes: Array com até 50 NFS-e a cancelar
+- cancelamento.detalhes[].chaveNFe.inscricaoPrestador: Inscrição municipal (CCM) do prestador
+- cancelamento.detalhes[].chaveNFe.numeroNFe: Número da NFS-e a cancelar
+- cancelamento.detalhes[].chaveNFe.codigoVerificacao: Código de verificação (opcional)
+
+Resposta de sucesso:
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "layoutVersion": "v01-1",
+    "resultado": {
+      "sucesso": true,
+      "alertas": [],
+      "erros": []
+    }
+  }
+}
+
+Resposta com erros:
+{
+  "success": true,
+  "data": {
+    "success": true,
+    "layoutVersion": "v01-1",
+    "resultado": {
+      "sucesso": false,
+      "erros": [
+        {
+          "codigo": "001",
+          "descricao": "Descrição do erro"
+        }
+      ]
+    }
+  }
+}

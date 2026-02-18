@@ -238,8 +238,69 @@ async function consultarSituacaoLote(req, res, next) {
   }
 }
 
+/**
+ * Cancels one or more NFSe (CancelamentoNFe)
+ * POST /api/v1/nfse/sp/sao-paulo/cancelamento-nfe
+ */
+async function cancelarNFe(req, res, next) {
+  try {
+    const { layoutVersion, cancelamento } = req.body;
+    const apiKey = req.apiKey; // From authentication middleware
+    const isTest = req.body.ambiente === 'teste' || req.body.ambiente === 'test';
+    const includeSoap = req.query.includeSoap !== 'false' && req.body.includeSoap !== false;
+    
+    // Validate layout version
+    if (!layoutVersion) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'MISSING_LAYOUT_VERSION',
+          message: 'Campo layoutVersion é obrigatório',
+        },
+      });
+    }
+    
+    if (layoutVersion !== nfseSpService.SUPPORTED_LAYOUT_VERSION) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'UNSUPPORTED_LAYOUT',
+          message: `Layout não suportado. Versão esperada: ${nfseSpService.SUPPORTED_LAYOUT_VERSION}`,
+        },
+      });
+    }
+    
+    // Validate cancelamento
+    if (!cancelamento) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'MISSING_CANCELAMENTO',
+          message: 'Campo cancelamento é obrigatório',
+        },
+      });
+    }
+    
+    // Call service
+    const result = await nfseSpService.cancelarNFe(
+      { layoutVersion, cancelamento, includeSoap },
+      apiKey,
+      isTest
+    );
+    
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    // Pass to error handler middleware
+    next(error);
+  }
+}
+
 module.exports = {
   enviarLoteRps,
   testarEnvioLoteRps,
   consultarSituacaoLote,
+  cancelarNFe,
 };

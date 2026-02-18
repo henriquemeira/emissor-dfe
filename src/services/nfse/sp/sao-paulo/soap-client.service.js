@@ -243,13 +243,14 @@ function buildSoapEnvelope(operationName, xml, versaoSchema) {
 }
 
 /**
- * Builds SOAP envelope for synchronous batch method (EnvioLoteRPS)
+ * Builds SOAP envelope for synchronous batch method (EnvioLoteRPS, CancelamentoNFe)
  * NOTE: Synchronous method requires "VersaoSchema" (capital V) instead of "versaoSchema"
  * @param {string} xml - XML message
  * @param {number} versaoSchema - Schema version
+ * @param {string} operationName - Operation name (default: 'EnvioLoteRPS')
  * @returns {string} SOAP envelope
  */
-function buildSoapEnvelopeSyncBatch(xml, versaoSchema) {
+function buildSoapEnvelopeSyncBatch(xml, versaoSchema, operationName = 'EnvioLoteRPS') {
   // Remove XML declaration from the payload if present
   let cleanXml = xml.trim();
   if (cleanXml.startsWith('<?xml')) {
@@ -263,14 +264,14 @@ function buildSoapEnvelopeSyncBatch(xml, versaoSchema) {
   logDebug('=== FIM: XML LIMPO ===');
   
   // Use CDATA to include XML without escaping
-  // IMPORTANT: Elements inside EnvioLoteRPSRequest should have tns: prefix for proper namespace qualification
+  // IMPORTANT: Elements inside Request should have tns: prefix for proper namespace qualification
   const envelope = `<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://www.prefeitura.sp.gov.br/nfe">
   <soap:Body>
-    <tns:EnvioLoteRPSRequest>
+    <tns:${operationName}Request>
       <tns:VersaoSchema>${versaoSchema}</tns:VersaoSchema>
       <tns:MensagemXML><![CDATA[${cleanXml}]]></tns:MensagemXML>
-    </tns:EnvioLoteRPSRequest>
+    </tns:${operationName}Request>
   </soap:Body>
 </soap:Envelope>`;
 
@@ -1019,10 +1020,158 @@ function parseRetornoConsultaSituacaoLote(retorno) {
   return response;
 }
 
+/**
+ * Cancels one or more NFSe (CancelamentoNFe)
+ * @param {string} xml - Signed XML (PedidoCancelamentoNFe)
+ * @param {number} versaoSchema - Schema version (1 for v01-1)
+ * @param {boolean} isProduction - Whether to use production endpoint
+ * @param {Buffer} certificateBuffer - Certificate PFX buffer for mTLS authentication
+ * @param {string} certificatePassword - Certificate password
+ * @returns {Object} Parsed response from web service
+ */
+async function cancelamentoNFe(xml, versaoSchema = 1, isProduction = false, certificateBuffer = null, certificatePassword = null) {
+  try {
+    // Build SOAP envelope for CancelamentoNFe
+    const soapEnvelope = buildSoapEnvelopeSyncBatch(xml, versaoSchema, 'CancelamentoNFe');
+    logDebug('SOAP request CancelamentoNFe:', soapEnvelope);
+    
+    // Get endpoint (sync - cancelamento uses sync endpoint)
+    const endpoint = isProduction ? ENDPOINTS.sync.production : ENDPOINTS.sync.test;
+    
+    // Configure HTTPS agent with client certificate if provided
+    const requestConfig = {
+      headers: {
+        'Content-Type': 'text/xml; charset=utf-8',
+        'SOAPAction': 'http://www.prefeitura.sp.gov.br/nfe/ws/cancelamentoNFe',
+      },
+      timeout: 60000, // 60 seconds timeout
+      validateStatus: () => true, // Accept any status code to handle manually
+    };
+    
+    // Add client certificate for mTLS if provided
+    if (certificateBuffer && certificatePassword) {
+      requestConfig.httpsAgent = new https.Agent({
+        pfx: certificateBuffer,
+        passphrase: certificatePassword,
+        rejectUnauthorized: true, // Validate server certificate
+      });
+    }
+    
+    // Send SOAP request
+    const response = await axios.post(endpoint, soapEnvelope, requestConfig);
+    logDebug('SOAP response CancelamentoNFe:', response.data);
+    
+    // Check for HTTP errors
+    if (response.status >= 400) {
+      logErrorDebug('Erro HTTP:', response.status, response.statusText);
+      
+      // Throw specific error for common HTTP errors
+      if (response.status === 403) {
+        throw new Error('Acesso negado (403). Verifique se o certificado digital está configurado corretamente e se tem permissão para acessar o serviço.');
+      } else if (response.status === 401) {
+        throw new Error('Não autorizado (401). Verifique as credenciais de autenticação.');
+      } else if (response.status === 404) {
+        throw new Error('Serviço não encontrado (404). Verifique a URL do endpoint.');
+      } else if (response.status >= 500) {
+        throw new Error(`Erro interno do servidor (${response.status}). Tente novamente mais tarde.`);
+      } else {
+        throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+      }
+    }
+    
+    // Parse SOAP response
+    const parsedResponse = await parseSoapResponseCancelamentoNFe(response.data);
+    
+    return {
+      parsed: parsedResponse,
+      soap: {
+        request: soapEnvelope,
+        response: response.data,
+      },
+    };
+  } catch (error) {
+    if (error.response) {
+      // Server responded with error
+      logErrorDebug('Erro na resposta do servidor:', error.response.status);
+      throw new Error(`Erro do servidor (${error.response.status}): ${error.message}`);
+    } else if (error.request) {
+      // Request was made but no response
+      throw new Error('Sem resposta do servidor. Verifique a conexão.');
+    } else {
+      // Error in request setup or parsing
+      throw new Error(`Erro ao enviar requisição: ${error.message}`);
+    }
+  }
+}
+
+/**
+ * Parses SOAP response for CancelamentoNFe
+ * @param {string} soapXml - SOAP response XML
+ * @returns {Object} Parsed response
+ */
+async function parseSoapResponseCancelamentoNFe(soapXml) {
+  try {
+    const parser = new xml2js.Parser({ explicitArray: false });
+    const parsed = await parser.parseStringPromise(soapXml);
+    
+    // Navigate SOAP structure
+    const soapBody = parsed['soap:Envelope']['soap:Body'];
+    const response = soapBody.CancelamentoNFeResponse;
+    
+    if (!response || !response.RetornoXML) {
+      throw new Error('Resposta inválida do web service');
+    }
+    
+    // Parse RetornoXML
+    const retornoXml = response.RetornoXML;
+    const retornoParsed = await parser.parseStringPromise(retornoXml);
+    
+    // Parse RetornoCancelamentoNFe
+    const retorno = retornoParsed.RetornoCancelamentoNFe;
+    
+    return parseRetornoCancelamentoNFe(retorno);
+  } catch (error) {
+    throw new Error(`Erro ao processar resposta SOAP: ${error.message}`);
+  }
+}
+
+/**
+ * Parses RetornoCancelamentoNFe structure
+ * @param {Object} retorno - Parsed RetornoCancelamentoNFe object
+ * @returns {Object} Formatted response
+ */
+function parseRetornoCancelamentoNFe(retorno) {
+  const root = retorno.RetornoCancelamentoNFe || retorno;
+  const cabecalho = root.Cabecalho;
+  const erros = ensureArray(root.Erro);
+  const alertas = ensureArray(root.Alerta);
+
+  const response = {
+    sucesso: cabecalho.Sucesso === 'true' || cabecalho.Sucesso === true,
+  };
+
+  if (alertas.length > 0) {
+    response.alertas = alertas.map(alerta => ({
+      codigo: alerta.Codigo,
+      descricao: alerta.Descricao,
+    }));
+  }
+
+  if (erros.length > 0) {
+    response.erros = erros.map(erro => ({
+      codigo: erro.Codigo,
+      descricao: erro.Descricao,
+    }));
+  }
+
+  return response;
+}
+
 module.exports = {
   envioLoteRpsAsync,
   testeEnvioLoteRpsAsync,
   consultaSituacaoLote,
   envioRps,
   envioLoteRpsSync,
+  cancelamentoNFe,
 };
