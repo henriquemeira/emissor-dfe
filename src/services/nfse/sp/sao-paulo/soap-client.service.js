@@ -7,9 +7,12 @@ const xml2js = require('xml2js');
  */
 
 // SOAP endpoints
+// NOTE: The test/homologação endpoint is not officially documented in the available
+// materials. The URL below is inferred based on common patterns for São Paulo web services.
+// This should be verified with the municipality before production use.
 const ENDPOINTS = {
   production: 'https://nfews.prefeitura.sp.gov.br/lotenfeasync.asmx',
-  test: 'https://nfews-homologacao.prefeitura.sp.gov.br/lotenfeasync.asmx', // Assuming test endpoint
+  test: 'https://nfews-homologacao.prefeitura.sp.gov.br/lotenfeasync.asmx',
 };
 
 /**

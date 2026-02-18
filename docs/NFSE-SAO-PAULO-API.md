@@ -290,8 +290,9 @@ Content-Type: application/json
 ## Ambientes
 
 ### Teste (Homologação)
-- Endpoint: `https://nfews-homologacao.prefeitura.sp.gov.br/lotenfeasync.asmx` (assumido)
+- Endpoint: `https://nfews-homologacao.prefeitura.sp.gov.br/lotenfeasync.asmx`
 - Ativar com: `"ambiente": "teste"`
+- ⚠️ **IMPORTANTE:** A URL do ambiente de teste não está documentada oficialmente nos materiais disponíveis. Foi inferida com base em padrões comuns dos web services da Prefeitura de São Paulo. Deve ser verificada junto à municipalidade antes do uso em produção.
 
 ### Produção
 - Endpoint: `https://nfews.prefeitura.sp.gov.br/lotenfeasync.asmx`

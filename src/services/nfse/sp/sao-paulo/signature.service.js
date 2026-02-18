@@ -1,4 +1,5 @@
 const forge = require('node-forge');
+const xmlCrypto = require('xml-crypto');
 
 /**
  * Signature Service for São Paulo NFS-e
@@ -131,25 +132,75 @@ function formatValueForSignature(value) {
 }
 
 /**
- * Signs the XML batch using XML Digital Signature
+ * Signs the XML batch using XML Digital Signature (XML-DSig)
+ * Uses xml-crypto library for proper W3C compliant signatures
  * @param {string} xml - XML string to sign
  * @param {Buffer} certificateBuffer - Certificate file buffer (PFX/P12)
  * @param {string} password - Certificate password
- * @returns {string} Signed XML
+ * @returns {Object} Signature object for insertion into XML
  */
 function signXMLBatch(xml, certificateBuffer, password) {
   try {
     // Get private key and certificate from PFX
     const { privateKey, certificate } = getCertificateAndKey(certificateBuffer, password);
     
-    // This is a simplified version - in production, you would use a proper XML-DSig library
-    // For now, we'll create a basic signature structure
-    const signature = createXMLSignature(xml, privateKey, certificate);
+    // Convert private key to PEM format for xml-crypto
+    const privateKeyPem = forge.pki.privateKeyToPem(privateKey);
     
-    return signature;
+    // Create signature using xml-crypto
+    const sig = new xmlCrypto.SignedXml({
+      privateKey: privateKeyPem,
+    });
+    
+    // Add reference to the document
+    sig.addReference({
+      xpath: '//*',
+      digestAlgorithm: 'http://www.w3.org/2000/09/xmldsig#sha1',
+      transforms: [
+        'http://www.w3.org/2000/09/xmldsig#enveloped-signature',
+        'http://www.w3.org/TR/2001/REC-xml-c14n-20010315'
+      ],
+    });
+    
+    // Set canonicalization and signature algorithms
+    sig.canonicalizationAlgorithm = 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315';
+    sig.signatureAlgorithm = 'http://www.w3.org/2000/09/xmldsig#rsa-sha1';
+    
+    // Add key info with certificate
+    const certPem = forge.pki.certificateToPem(certificate);
+    const certBase64 = certPem
+      .replace('-----BEGIN CERTIFICATE-----', '')
+      .replace('-----END CERTIFICATE-----', '')
+      .replace(/\n/g, '');
+    
+    sig.keyInfoProvider = {
+      getKeyInfo: () => {
+        return `<X509Data><X509Certificate>${certBase64}</X509Certificate></X509Data>`;
+      },
+    };
+    
+    // Compute signature
+    sig.computeSignature(xml);
+    
+    // Get the signature XML
+    const signatureXml = sig.getSignatureXml();
+    
+    // Parse signature XML to return as object structure
+    return parseSignatureXml(signatureXml);
   } catch (error) {
     throw new Error(`Erro ao assinar lote XML: ${error.message}`);
   }
+}
+
+/**
+ * Parses signature XML string into object structure
+ * @param {string} signatureXml - Signature XML string
+ * @returns {Object} Parsed signature object
+ */
+function parseSignatureXml(signatureXml) {
+  // For now, return the raw signature XML as a string
+  // The xml-builder will handle inserting it correctly
+  return signatureXml;
 }
 
 /**
@@ -208,58 +259,6 @@ function getCertificateAndKey(certificateBuffer, password) {
   } catch (error) {
     throw new Error(`Erro ao extrair certificado e chave: ${error.message}`);
   }
-}
-
-/**
- * Creates XML Digital Signature structure
- * @param {string} xml - XML to sign
- * @param {Object} privateKey - Private key
- * @param {Object} certificate - Certificate
- * @returns {Object} Signature object
- */
-function createXMLSignature(xml, privateKey, certificate) {
-  // Create signature
-  const md = forge.md.sha1.create();
-  md.update(xml, 'utf8');
-  const signature = privateKey.sign(md);
-  
-  // Build signature structure according to XML-DSig spec
-  const signatureValue = forge.util.encode64(signature);
-  const certPem = forge.pki.certificateToPem(certificate);
-  const certBase64 = certPem
-    .replace('-----BEGIN CERTIFICATE-----', '')
-    .replace('-----END CERTIFICATE-----', '')
-    .replace(/\n/g, '');
-  
-  return {
-    'SignedInfo': [{
-      'CanonicalizationMethod': [{
-        '$': { 'Algorithm': 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315' },
-      }],
-      'SignatureMethod': [{
-        '$': { 'Algorithm': 'http://www.w3.org/2000/09/xmldsig#rsa-sha1' },
-      }],
-      'Reference': [{
-        '$': { 'URI': '' },
-        'Transforms': [{
-          'Transform': [
-            { '$': { 'Algorithm': 'http://www.w3.org/2000/09/xmldsig#enveloped-signature' } },
-            { '$': { 'Algorithm': 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315' } },
-          ],
-        }],
-        'DigestMethod': [{
-          '$': { 'Algorithm': 'http://www.w3.org/2000/09/xmldsig#sha1' },
-        }],
-        'DigestValue': [forge.util.encode64(md.digest().bytes())],
-      }],
-    }],
-    'SignatureValue': [signatureValue],
-    'KeyInfo': [{
-      'X509Data': [{
-        'X509Certificate': [certBase64],
-      }],
-    }],
-  };
 }
 
 module.exports = {
