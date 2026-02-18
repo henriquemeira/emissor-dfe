@@ -1,4 +1,11 @@
-<PedidoEnvioLoteRPS xmlns="http://www.prefeitura.sp.gov.br/nfe" xmlns:tipos="http://www.prefeitura.sp.gov.br/nfe/tipos" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><Cabecalho Versao="1" xmlns=""><CPFCNPJRemetente><CNPJ>52507723000185</CNPJ></CPFCNPJRemetente><transacao>true</transacao><dtInicio>2026-02-01</dtInicio><dtFim>2026-02-17</dtFim><QtdRPS>1</QtdRPS><ValorTotalServicos>1000.00</ValorTotalServicos><ValorTotalDeducoes>0.00</ValorTotalDeducoes></Cabecalho><RPS xmlns=""><Assinatura>eUKgFMbP8XiMlHuP57/PaPwY7yz6oy4Hw1DaSbLnfo6ncZu1pAuuXCHkspBXeJjd3ADPrL1Wpf6YC8hGSfK6WHa6NQR3SNut8iIRSVPe2lGn0txCADtK61J2kt/FH8KNOyg5ffx3xJReI2ibEyHVlC4rG1n/LL74vgdnJwVfIH7oU+WpzAD4U70vJRg7z+vuOfwcTbJkmIkocytbisYJia4VKC8usi/tqcnuIYllAP45/EAJyGoCi2lLVy8WMtNCvzSM9VfGzGCcf6qNXoMae40f8tK55gCBnOrD8G2aAbNCpNTSBPtCV4WpzTbKFzMjVbDEATHht6EfVY14wwe/8w==</Assinatura><ChaveRPS><InscricaoPrestador>78709806</InscricaoPrestador><SerieRPS>1</SerieRPS><NumeroRPS>1</NumeroRPS></ChaveRPS><TipoRPS>RPS</TipoRPS><DataEmissao>2026-02-17</DataEmissao><StatusRPS>N</StatusRPS><TributacaoRPS>T</TributacaoRPS><ValorServicos>1000.00</ValorServicos><ValorDeducoes>0.00</ValorDeducoes><CodigoServico>2684</CodigoServico><AliquotaServicos>0.0000</AliquotaServicos><ISSRetido>false</ISSRetido><Discriminacao>Serviços de consultoria em TI</Discriminacao></RPS><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>S9iGjawJGHc/RV+20xLpJtk0Fgk=</DigestValue></Reference></SignedInfo><SignatureValue>Pu9Po6k4rtadMMufAj2rJ5/qrGKHtZIyc+r46Oqp4SyVxi00KbEJKo0NvZsN7NA1CYEwneRIAFbEnaaGkozud7puIEht//XpiTdWOnvBdCVNzPB3vvrVx44gYAmid2hhmed9s4RidOirtUyAnMT7x7nlGpFCB4qLD+LzQpr/3VCGiT8v35N/r9pwf9Pz9WZTvOA3MVmY4zUxZoWjp2DsGSkny7V/6zNLfjmqb3mkcwjznC6LHGi2MQajDIuFF5n7Q3yXoZoD3lAltjPJhf+5vU9MDlOC/MYiZlJS8l7pC3+XilMTegMdY5vCcgXq9CCNUtLGFnCke1qovc8aBl/XHA==</SignatureValue><KeyInfo><X509Data><X509Certifica</X509Certificate></X509Data></KeyInfo></Signature></PedidoEnvioLoteRPS>
+Implementar cancelamento de NFSe referente à Fase 2 - NFS-e (Nota Fiscal de Serviço Eletrônica) - Emissão de RPS do Município de São Paulo / SP; 
+
+Esta transmissão tem o objetivo de efetuar o cancelamento de uma NFS-e emitida.
+Utilizar o método sincrono PedidoCancelamentoNFe documentado em docs/nfse/SP/Sao_Paulo/schemas-reformatributaria-v02-4/PedidoCancelamentoNFe_v02.xsd
+Deve ser utilizado a transmissão respeitando as regras DSWD estabelecidas em docs/nfse/SP/Sao_Paulo/nfews.prefeitura.sp.gov.br_lotenfe.asmx_WSDL.xml
+Não interfira nos métodos de transmissão de RPS sincrono/assincrono, bem como no método de consulta;
+Você deve reutilizar o que for necessário para a implementação desta funcionalidade.
+
 
 Implementar Cancelamento de NFS-e referente à Fase 2 - NFS-e (Nota Fiscal de Serviço Eletrônica) - Emissão de RPS do Município de São Paulo / SP;
     
@@ -62,3 +69,25 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/consulta-situacao-lo
 
 
 
+curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/cancelamento-nfe \
+  -H "X-API-Key: 41b3db5a-692a-463e-b20e-fc9a3637e05c" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "layoutVersion": "v01-1",
+    "ambiente": "producao",
+    "cancelamento": {
+      "cabecalho": {
+        "cpfCnpjRemetente": {"cnpj": "52507723000185"},
+        "transacao": true
+      },
+      "detalhes": [
+        {
+          "chaveNFe": {
+            "inscricaoPrestador": 78709806,
+            "numeroNFe": 507
+          }
+        }
+      ]
+    }
+  }'
+  
