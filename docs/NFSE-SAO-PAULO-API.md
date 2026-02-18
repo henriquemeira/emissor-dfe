@@ -397,7 +397,35 @@ A string é assinada usando SHA-1 com RSA e codificada em Base64.
 
 ---
 
+## Fluxo Típico de Uso
+
+### Passo 1: Enviar o Lote de RPS
+1. Prepare os dados do lote conforme o layout v01-1
+2. Envie o lote usando o endpoint `/envio-lote-rps`
+3. Receba o `numeroProtocolo` na resposta
+
+### Passo 2: Aguardar o Processamento
+- O processamento é assíncrono e pode levar alguns minutos
+- Aguarde de 30 segundos a 5 minutos antes de consultar
+
+### Passo 3: Consultar a Situação do Lote
+1. Use o `numeroProtocolo` recebido no Passo 1
+2. Consulte usando o endpoint `/consulta-situacao-lote`
+3. Verifique o campo `situacao.codigo`:
+   - **0 (enviado)**: Aguarde mais tempo e consulte novamente
+   - **1 (invalidado)**: Verifique os erros retornados
+   - **2 (verificado)**: Lote em processamento, aguarde mais
+   - **3 (processado)**: Lote processado com sucesso
+
+### Passo 4: Processar o Resultado
+- Se processado com sucesso, utilize o `numeroLote` e `resultadoOperacao`
+- Se invalidado, corrija os erros e reenvie
+
+---
+
 ## Exemplo Completo
+
+### Enviando um Lote de RPS
 
 ```bash
 curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/envio-lote-rps \
@@ -440,6 +468,25 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/envio-lote-rps \
     }
   }'
 ```
+
+### Consultando a Situação do Lote
+
+Após enviar o lote, você receberá um `numeroProtocolo` na resposta. Use-o para consultar o status:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/consulta-situacao-lote \
+  -H "X-API-Key: sua-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "layoutVersion": "v01-1",
+    "ambiente": "teste",
+    "cpfCnpjRemetente": {
+      "cnpj": "12345678901234"
+    },
+    "numeroProtocolo": "ce511ff737bb48a897309ad41e0642f3"
+  }'
+```
+
 
 ---
 
