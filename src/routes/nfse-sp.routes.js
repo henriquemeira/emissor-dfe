@@ -58,4 +58,20 @@ router.post('/envio-lote-rps', authenticateApiKey, nfseSpController.enviarLoteRp
  */
 router.post('/teste-envio-lote-rps', authenticateApiKey, nfseSpController.testarEnvioLoteRps);
 
+/**
+ * POST /consulta-situacao-lote
+ * Consults batch status using protocol number
+ * 
+ * Request body:
+ * {
+ *   "layoutVersion": "v01-1",
+ *   "ambiente": "teste" | "producao",  // opcional, padrão: teste
+ *   "cpfCnpjRemetente": {
+ *     "cnpj": "12345678901234"  // ou "cpf": "12345678901"
+ *   },
+ *   "numeroProtocolo": "ce511ff737bb48a897309ad41e0642f3"
+ * }
+ */
+router.post('/consulta-situacao-lote', authenticateApiKey, nfseSpController.consultarSituacaoLote);
+
 module.exports = router;

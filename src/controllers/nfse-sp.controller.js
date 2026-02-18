@@ -122,7 +122,79 @@ async function testarEnvioLoteRps(req, res, next) {
   }
 }
 
+/**
+ * Consults batch status using protocol number (ConsultaSituacaoLote)
+ * POST /api/v1/nfse/sp/sao-paulo/consulta-situacao-lote
+ */
+async function consultarSituacaoLote(req, res, next) {
+  try {
+    const { layoutVersion, cpfCnpjRemetente, numeroProtocolo } = req.body;
+    const apiKey = req.apiKey; // From authentication middleware
+    const isTest = req.body.ambiente === 'teste' || req.body.ambiente === 'test';
+    const includeSoap = req.query.includeSoap !== 'false' && req.body.includeSoap !== false;
+    
+    // Validate layout version
+    if (!layoutVersion) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'MISSING_LAYOUT_VERSION',
+          message: 'Campo layoutVersion é obrigatório',
+        },
+      });
+    }
+    
+    if (layoutVersion !== nfseSpService.SUPPORTED_LAYOUT_VERSION) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'UNSUPPORTED_LAYOUT',
+          message: `Layout não suportado. Versão esperada: ${nfseSpService.SUPPORTED_LAYOUT_VERSION}`,
+        },
+      });
+    }
+    
+    // Validate cpfCnpjRemetente
+    if (!cpfCnpjRemetente) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'MISSING_CPF_CNPJ',
+          message: 'Campo cpfCnpjRemetente é obrigatório',
+        },
+      });
+    }
+    
+    // Validate numeroProtocolo
+    if (!numeroProtocolo) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: 'MISSING_PROTOCOL',
+          message: 'Campo numeroProtocolo é obrigatório',
+        },
+      });
+    }
+    
+    // Call service
+    const result = await nfseSpService.consultarSituacaoLote(
+      { layoutVersion, cpfCnpjRemetente, numeroProtocolo, includeSoap },
+      apiKey,
+      isTest
+    );
+    
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    // Pass to error handler middleware
+    next(error);
+  }
+}
+
 module.exports = {
   enviarLoteRps,
   testarEnvioLoteRps,
+  consultarSituacaoLote,
 };

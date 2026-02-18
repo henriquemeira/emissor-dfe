@@ -282,6 +282,37 @@ function formatPercentual(percentual) {
   return Number(percentual).toFixed(2);
 }
 
+/**
+ * Builds the PedidoConsultaSituacaoLote XML structure
+ * @param {Object} data - Consultation data
+ * @param {Object} data.cpfCnpjRemetente - CPF/CNPJ of sender
+ * @param {string} data.numeroProtocolo - Protocol number from batch submission
+ * @returns {string} XML string
+ */
+function buildPedidoConsultaSituacaoLote(data) {
+  const { cpfCnpjRemetente, numeroProtocolo } = data;
+
+  // Build XML object structure according to schema
+  const xmlObject = {
+    'PedidoConsultaSituacaoLote': {
+      '$': {
+        'xmlns': 'http://www.prefeitura.sp.gov.br/nfe',
+        'xmlns:tipos': 'http://www.prefeitura.sp.gov.br/nfe/tipos',
+      },
+      'CPFCNPJRemetente': [buildCPFCNPJ(cpfCnpjRemetente)],
+      'NumeroProtocolo': [numeroProtocolo],
+    },
+  };
+
+  const builder = new xml2js.Builder({
+    xmldec: { version: '1.0', encoding: 'UTF-8' },
+    renderOpts: { pretty: false },
+  });
+
+  return builder.buildObject(xmlObject);
+}
+
 module.exports = {
   buildPedidoEnvioLoteRPS,
+  buildPedidoConsultaSituacaoLote,
 };
