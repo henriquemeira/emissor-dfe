@@ -58,10 +58,16 @@ Acesse **Settings > Environment Variables** e adicione:
 | `NODE_ENV` | `production` | Modo de execução |
 | `ENCRYPTION_KEY` | `[string aleatória 32+ chars]` | Chave mestra de criptografia |
 | `ALLOWED_ORIGINS` | `https://seuapp.com` | Origens CORS permitidas (separadas por vírgula) |
+| `STORAGE_DRIVER` | `blob` | Seleciona o driver de armazenamento (recomendado explícito) |
+| `BLOB_PREFIX` | `accounts/` | Prefixo dos objetos no Blob *(opcional, padrão: `accounts/`)* |
 | `RATE_LIMIT_WINDOW_MS` | `900000` | Janela de rate limiting (15 minutos) |
 | `RATE_LIMIT_MAX_REQUESTS` | `100` | Máximo de requisições por janela |
 
 > **IMPORTANTE**: A variável `PORT` **não deve** ser configurada — o Vercel gerencia isso automaticamente.
+>
+> **IMPORTANTE**: `DATA_DIR` é usado **apenas** pelo driver `fs` (filesystem local) e **não tem efeito** quando `STORAGE_DRIVER=blob`.
+>
+> A variável `BLOB_READ_WRITE_TOKEN` é adicionada automaticamente pelo Vercel ao conectar o Blob Store (passo 3). Quando ela estiver presente, o driver `blob` é selecionado automaticamente, a menos que `STORAGE_DRIVER` seja definido explicitamente.
 
 **Para gerar um `ENCRYPTION_KEY` seguro:**
 ```bash
@@ -156,8 +162,9 @@ ALLOWED_ORIGINS=https://seuapp.com,https://www.seuapp.com
 - [ ] `ENCRYPTION_KEY` forte e aleatória configurada (32+ caracteres)
 - [ ] `NODE_ENV` definido como `production`
 - [ ] `ALLOWED_ORIGINS` configurado para seus domínios
-- [ ] Vercel Blob Storage criado e conectado ao projeto
-- [ ] Health check respondendo corretamente
+- [ ] Vercel Blob Storage criado e conectado ao projeto (`BLOB_READ_WRITE_TOKEN` gerado automaticamente)
+- [ ] `STORAGE_DRIVER=blob` configurado explicitamente
+- [ ] Health check respondendo corretamente (`storage.writable: true`)
 - [ ] Todos os endpoints testados com a URL de produção
 - [ ] Domínio customizado configurado (se necessário)
 - [ ] Documentação compartilhada com a equipe
