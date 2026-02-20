@@ -150,7 +150,7 @@ O servidor estará disponível em `http://localhost:3000`
 
 ### HTTPS
 - **Obrigatório em produção**
-- Configure seu reverse proxy (nginx, Apache) ou use plataformas como Render.com que fornecem HTTPS automático
+- Configure seu reverse proxy (nginx, Apache) ou use plataformas como Vercel que fornecem HTTPS automático
 
 ### Headers de Segurança
 - Helmet configurado para proteção contra vulnerabilidades comuns
@@ -471,40 +471,48 @@ emissor-dfe/
 └── README.md
 ```
 
-## 🚀 Deploy no Render.com
+## 🚀 Deploy no Vercel
+
+O Vercel é a plataforma recomendada para este projeto, pois oferece **1 GB de Blob Storage gratuito** (plano Hobby) — essencial para persistir os certificados digitais criptografados entre deploys.
 
 ### Configuração Rápida
 
-1. **Crie uma conta no [Render.com](https://render.com)**
+1. **Crie uma conta no [Vercel](https://vercel.com)** (pode usar login com GitHub)
 
-2. **Crie um novo Web Service**
+2. **Importe o projeto**
+   - Acesse [vercel.com/new](https://vercel.com/new)
    - Conecte seu repositório GitHub
-   - Configure o serviço:
-     - **Build Command:** `npm install`
-     - **Start Command:** `npm start`
-     - **Environment:** `Node`
+   - O arquivo `vercel.json` já está configurado no repositório
 
-3. **Configure as variáveis de ambiente** no dashboard do Render:
+3. **Configure o Vercel Blob Storage**
+   - No painel do projeto: **Storage > Create Database > Blob**
+   - Nomeie o store (ex: `emissor-dfe-data`) e clique em **Create**
+   - A variável `BLOB_READ_WRITE_TOKEN` será adicionada automaticamente
+
+4. **Configure as variáveis de ambiente** em **Settings > Environment Variables**:
    - `ENCRYPTION_KEY` - Sua chave mestra (32+ caracteres aleatórios)
    - `NODE_ENV` - `production`
    - `ALLOWED_ORIGINS` - URLs permitidas (ex: `https://seuapp.com`)
-   - `PORT` - Deixe vazio (Render configura automaticamente)
    - `RATE_LIMIT_WINDOW_MS` - `900000`
    - `RATE_LIMIT_MAX_REQUESTS` - `100`
+   - > **Não configure `PORT`** — o Vercel gerencia isso automaticamente
 
-4. **Deploy**
-   - O Render fará deploy automaticamente
+5. **Deploy**
+   - Clique em **Deploy**
    - HTTPS é fornecido automaticamente
-   - Suas variáveis de ambiente são seguras
+   - Deploy automático a cada push para o branch `main`
+
+### Guia Completo
+Para instruções detalhadas, consulte **[docs/VERCEL-DEPLOYMENT.md](docs/VERCEL-DEPLOYMENT.md)**.
 
 ### Health Check
-O Render usará automaticamente o endpoint `/health` para verificar se o serviço está saudável.
+O Vercel usará automaticamente o endpoint `/health` para verificar se o serviço está saudável.
 
 ## 🔍 Monitoramento e Logs
 
 ### Logs
 Em desenvolvimento, os logs são exibidos no console. Em produção, use serviços como:
-- **Render Logs** (integrado)
+- **Vercel Logs** (integrado)
 - **LogDNA**
 - **Papertrail**
 - **Datadog**
