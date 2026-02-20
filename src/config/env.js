@@ -13,6 +13,9 @@ const config = {
   },
   storage: {
     dataDir: process.env.DATA_DIR || './data',
+    driver: process.env.STORAGE_DRIVER || (process.env.BLOB_READ_WRITE_TOKEN ? 'blob' : 'fs'),
+    blobToken: process.env.BLOB_READ_WRITE_TOKEN,
+    blobPrefix: process.env.BLOB_PREFIX || 'accounts/',
   },
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 900000, // 15 minutes
