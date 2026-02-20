@@ -150,7 +150,7 @@ O servidor estará disponível em `http://localhost:3000`
 
 ### HTTPS
 - **Obrigatório em produção**
-- Configure seu reverse proxy (nginx, Apache) ou use plataformas como Vercel que fornecem HTTPS automático
+- Configure seu reverse proxy (nginx, Apache) ou use plataformas como Vercel ou Render.com que fornecem HTTPS automático
 
 ### Headers de Segurança
 - Helmet configurado para proteção contra vulnerabilidades comuns
@@ -471,11 +471,21 @@ emissor-dfe/
 └── README.md
 ```
 
-## 🚀 Deploy no Vercel
+## 🚀 Deploy
 
-O Vercel é a plataforma recomendada para este projeto, pois oferece **1 GB de Blob Storage gratuito** (plano Hobby) — essencial para persistir os certificados digitais criptografados entre deploys.
+Escolha a plataforma que melhor se adapta às suas necessidades:
 
-### Configuração Rápida
+| Recurso | Vercel (Hobby) | Render.com (Free) |
+|---------|---------------|-------------------|
+| HTTPS automático | ✅ | ✅ |
+| Deploy automático (GitHub) | ✅ | ✅ |
+| Domínio customizado | ✅ | ✅ |
+| Persistência de dados | ✅ 1 GB Blob Storage gratuito | ⚠️ Efêmero (Disk pago para persistir) |
+| Sleep em inatividade | ✅ Não dorme (serverless) | ❌ Dorme após 15 min de inatividade |
+
+### Deploy no Vercel
+
+O Vercel é a plataforma **recomendada** para este projeto, pois oferece **1 GB de Blob Storage gratuito** (plano Hobby) — essencial para persistir os certificados digitais criptografados entre deploys.
 
 1. **Crie uma conta no [Vercel](https://vercel.com)** (pode usar login com GitHub)
 
@@ -502,17 +512,45 @@ O Vercel é a plataforma recomendada para este projeto, pois oferece **1 GB de B
    - HTTPS é fornecido automaticamente
    - Deploy automático a cada push para o branch `main`
 
-### Guia Completo
 Para instruções detalhadas, consulte **[docs/VERCEL-DEPLOYMENT.md](docs/VERCEL-DEPLOYMENT.md)**.
 
+### Deploy no Render.com
+
+O Render.com é uma alternativa simples de configurar. Note que o plano gratuito usa **sistema de arquivos efêmero** — para persistência de dados em produção, utilize um **Disk** pago ou migre os dados para armazenamento externo.
+
+1. **Crie uma conta no [Render.com](https://render.com)**
+
+2. **Crie um novo Web Service**
+   - Conecte seu repositório GitHub
+   - Configure o serviço:
+     - **Build Command:** `npm install`
+     - **Start Command:** `npm start`
+     - **Environment:** `Node`
+
+3. **Configure as variáveis de ambiente** no dashboard do Render:
+   - `ENCRYPTION_KEY` - Sua chave mestra (32+ caracteres aleatórios)
+   - `NODE_ENV` - `production`
+   - `ALLOWED_ORIGINS` - URLs permitidas (ex: `https://seuapp.com`)
+   - `PORT` - Deixe vazio (Render configura automaticamente)
+   - `RATE_LIMIT_WINDOW_MS` - `900000`
+   - `RATE_LIMIT_MAX_REQUESTS` - `100`
+
+4. **Deploy**
+   - O Render fará deploy automaticamente
+   - HTTPS é fornecido automaticamente
+   - Suas variáveis de ambiente são seguras
+
+Para instruções detalhadas, consulte **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**.
+
 ### Health Check
-O Vercel usará automaticamente o endpoint `/health` para verificar se o serviço está saudável.
+Ambas as plataformas utilizam automaticamente o endpoint `/health` para verificar se o serviço está saudável.
 
 ## 🔍 Monitoramento e Logs
 
 ### Logs
 Em desenvolvimento, os logs são exibidos no console. Em produção, use serviços como:
 - **Vercel Logs** (integrado)
+- **Render Logs** (integrado)
 - **LogDNA**
 - **Papertrail**
 - **Datadog**
