@@ -150,7 +150,7 @@ O servidor estará disponível em `http://localhost:3000`
 
 ### HTTPS
 - **Obrigatório em produção**
-- Configure seu reverse proxy (nginx, Apache) ou use plataformas como Render.com que fornecem HTTPS automático
+- Configure seu reverse proxy (nginx, Apache) ou use plataformas como Vercel ou Render.com que fornecem HTTPS automático
 
 ### Headers de Segurança
 - Helmet configurado para proteção contra vulnerabilidades comuns
@@ -471,9 +471,52 @@ emissor-dfe/
 └── README.md
 ```
 
-## 🚀 Deploy no Render.com
+## 🚀 Deploy
 
-### Configuração Rápida
+Escolha a plataforma que melhor se adapta às suas necessidades:
+
+| Recurso | Vercel (Hobby) | Render.com (Free) |
+|---------|---------------|-------------------|
+| HTTPS automático | ✅ | ✅ |
+| Deploy automático (GitHub) | ✅ | ✅ |
+| Domínio customizado | ✅ | ✅ |
+| Persistência de dados | ✅ 1 GB Blob Storage gratuito | ⚠️ Efêmero (Disk pago para persistir) |
+| Sleep em inatividade | ✅ Não dorme (serverless) | ❌ Dorme após 15 min de inatividade |
+
+### Deploy no Vercel
+
+O Vercel é a plataforma **recomendada** para este projeto, pois oferece **1 GB de Blob Storage gratuito** (plano Hobby) — essencial para persistir os certificados digitais criptografados entre deploys.
+
+1. **Crie uma conta no [Vercel](https://vercel.com)** (pode usar login com GitHub)
+
+2. **Importe o projeto**
+   - Acesse [vercel.com/new](https://vercel.com/new)
+   - Conecte seu repositório GitHub
+   - O arquivo `vercel.json` já está configurado no repositório
+
+3. **Configure o Vercel Blob Storage**
+   - No painel do projeto: **Storage > Create Database > Blob**
+   - Nomeie o store (ex: `emissor-dfe-data`) e clique em **Create**
+   - A variável `BLOB_READ_WRITE_TOKEN` será adicionada automaticamente
+
+4. **Configure as variáveis de ambiente** em **Settings > Environment Variables**:
+   - `ENCRYPTION_KEY` - Sua chave mestra (32+ caracteres aleatórios)
+   - `NODE_ENV` - `production`
+   - `ALLOWED_ORIGINS` - URLs permitidas (ex: `https://seuapp.com`)
+   - `RATE_LIMIT_WINDOW_MS` - `900000`
+   - `RATE_LIMIT_MAX_REQUESTS` - `100`
+   - > **Não configure `PORT`** — o Vercel gerencia isso automaticamente
+
+5. **Deploy**
+   - Clique em **Deploy**
+   - HTTPS é fornecido automaticamente
+   - Deploy automático a cada push para o branch `main`
+
+Para instruções detalhadas, consulte **[docs/VERCEL-DEPLOYMENT.md](docs/VERCEL-DEPLOYMENT.md)**.
+
+### Deploy no Render.com
+
+O Render.com é uma alternativa simples de configurar. Note que o plano gratuito usa **sistema de arquivos efêmero** — para persistência de dados em produção, utilize um **Disk** pago ou migre os dados para armazenamento externo.
 
 1. **Crie uma conta no [Render.com](https://render.com)**
 
@@ -497,13 +540,16 @@ emissor-dfe/
    - HTTPS é fornecido automaticamente
    - Suas variáveis de ambiente são seguras
 
+Para instruções detalhadas, consulte **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**.
+
 ### Health Check
-O Render usará automaticamente o endpoint `/health` para verificar se o serviço está saudável.
+Ambas as plataformas utilizam automaticamente o endpoint `/health` para verificar se o serviço está saudável.
 
 ## 🔍 Monitoramento e Logs
 
 ### Logs
 Em desenvolvimento, os logs são exibidos no console. Em produção, use serviços como:
+- **Vercel Logs** (integrado)
 - **Render Logs** (integrado)
 - **LogDNA**
 - **Papertrail**
