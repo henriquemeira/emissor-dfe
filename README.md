@@ -15,7 +15,8 @@ API middleware para emissão simplificada de documentos fiscais eletrônicos bra
 - ✅ **CORS** configurável
 - ✅ **Headers de segurança** com Helmet
 - ✅ **Validação de certificados** A1 antes de armazenar
-- 🚧 **Emissão de NF-e, CT-e, MDF-e, NFS-e** (Fase 2 e 3)
+- ✅ **Emissão de NF-e** - NF-e v4.00 (emitir, consultar, cancelar, inutilizar)
+- 🚧 **Emissão de CT-e, MDF-e** (Fase 4)
 
 ## 🚀 Status do Projeto
 
@@ -37,8 +38,14 @@ API middleware para emissão simplificada de documentos fiscais eletrônicos bra
   - 📅 Cancelamento de NFS-e (planejado)
   - 📅 Consulta de guia (planejado)
 
-**Fase 3** - 📅 Planejado
-- Emissão de CT-e, MDF-e e NFS-e
+**Fase 3** - ✅ **COMPLETO**
+- NF-e (Nota Fiscal Eletrônica) versão 4.00
+  - ✅ Emissão de NF-e (NFeAutorizacao4)
+  - ✅ Consulta de NF-e por chave de acesso (NfeConsultaProtocolo4)
+  - ✅ Cancelamento de NF-e via evento (NFeRecepcaoEvento4)
+  - ✅ Inutilização de numeração (NfeInutilizacao4)
+  - ✅ Assinatura digital XML-DSig automática
+  - ✅ Suporte a todos os estados brasileiros
 
 ## 🛠️ Tecnologias
 
@@ -374,13 +381,48 @@ Para documentação completa sobre NFS-e de São Paulo, consulte:
 
 #### Outros Documentos Fiscais
 
-🚧 **Em desenvolvimento (Fase 3 e 4)**
+#### NF-e (Nota Fiscal Eletrônica)
+
+Para documentação completa sobre NF-e, consulte:
+- **[NFE-API.md](docs/NFE-API.md)** - Documentação detalhada da API NF-e
+
+**Emitir NF-e:**
+
+`POST /api/v1/nfe/emitir`
+
+**Headers:**
+- `X-API-Key`: Sua API Key
+- `Content-Type`: application/json
+
+**Request Body (resumido):**
+```json
+{
+  "ambiente": "homologacao",
+  "nfe": {
+    "ide": { "cUF": 35, "mod": 55, "serie": 1, "nNF": 1, "dhEmi": "2024-01-15T10:00:00-03:00", "..." },
+    "emit": { "CNPJ": "12345678901234", "xNome": "Emitente Ltda", "IE": "111111111111", "CRT": 3, "..." },
+    "dest": { "CNPJ": "98765432109876", "xNome": "Destinatário Ltda", "indIEDest": 1, "..." },
+    "det": [{ "nItem": 1, "prod": { "cProd": "001", "xProd": "Produto", "NCM": "84715000", "CFOP": "5102", "..." }, "imposto": { "..." } }],
+    "total": { "ICMSTot": { "vProd": 100.00, "vNF": 100.00, "..." } },
+    "transp": { "modFrete": 9 },
+    "pag": { "detPag": [{ "tPag": "01", "vPag": 100.00 }] }
+  }
+}
+```
+
+**Consultar NF-e:** `POST /api/v1/nfe/consultar`
+
+**Cancelar NF-e:** `POST /api/v1/nfe/cancelar`
+
+**Inutilizar NF-e:** `POST /api/v1/nfe/inutilizar`
+
+---
+
+#### Outros Documentos Fiscais
+
+🚧 **Em desenvolvimento (Fase 4)**
 
 Os seguintes endpoints serão implementados nas próximas fases:
-- `POST /api/v1/nfe/emitir` - Emitir NF-e
-- `POST /api/v1/nfe/cancelar` - Cancelar NF-e
-- `POST /api/v1/nfe/consultar` - Consultar NF-e
-- `POST /api/v1/nfe/inutilizar` - Inutilizar numeração de NF-e
 - `POST /api/v1/cte/emitir` - Emitir CT-e
 - `POST /api/v1/mdfe/emitir` - Emitir MDF-e
 
@@ -617,11 +659,13 @@ Contribuições são bem-vindas! Por favor:
     - [x] EnvioRps (envio individual)
   - [x] Consulta de situação do lote
   - [x] Cancelamento de NFS-e
-- [ ] **Fase 3** - Implementação completa de NF-e
-  - [ ] Emissão de NF-e
-  - [ ] Cancelamento de NF-e
-  - [ ] Consulta de NF-e
-  - [ ] Inutilização de numeração
+- [x] **Fase 3** - Implementação completa de NF-e
+  - [x] Emissão de NF-e (NFeAutorizacao4)
+  - [x] Consulta de NF-e por chave de acesso (NfeConsultaProtocolo4)
+  - [x] Cancelamento de NF-e via evento (NFeRecepcaoEvento4)
+  - [x] Inutilização de numeração (NfeInutilizacao4)
+  - [x] Assinatura digital XML-DSig automática
+  - [x] Documentação completa com exemplos cURL
 - [ ] **Fase 4** - Outros documentos fiscais
   - [ ] CT-e (Conhecimento de Transporte Eletrônico)
   - [ ] MDF-e (Manifesto Eletrônico de Documentos Fiscais)
