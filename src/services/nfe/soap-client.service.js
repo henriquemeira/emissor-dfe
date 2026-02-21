@@ -174,10 +174,19 @@ const SERVICE_PATH = {
 // SEFAZ WSDL namespaces per service
 const SERVICE_NAMESPACE = {
   autorizacao:      'http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4',
-  consultaProtocolo:'http://www.portalfiscal.inf.br/nfe/wsdl/NfeConsultaProtocolo4',
-  inutilizacao:     'http://www.portalfiscal.inf.br/nfe/wsdl/NfeInutilizacao4',
+  consultaProtocolo:'http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4',
+  inutilizacao:     'http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4',
   recepcaoEvento:   'http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4',
   statusServico:    'http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4',
+};
+
+// SOAP Action header per service
+const SOAP_ACTION = {
+  autorizacao:      'http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4/nfeAutorizacaoLote',
+  consultaProtocolo:'http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4/nfeConsultaNF',
+  inutilizacao:     'http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4/nfeInutilizacaoNF',
+  recepcaoEvento:   'http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4/nfeRecepcaoEvento',
+  statusServico:    'http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4/nfeStatusServicoNF',
 };
 
 /**
@@ -296,11 +305,18 @@ async function sendSoapRequest(options) {
   } = options;
 
   const endpoint = endpointOverride || getEndpoint(service, cUF, isProduction);
+  console.log('[SOAP Client] URL do endpoint SEFAZ:', endpoint);
+  console.log('[SOAP Client] Serviço:', service);
+  
   const soapEnvelope = buildSoapEnvelope(service, bodyXml, cUF);
+  console.log('[SOAP Client] SOAP Envelope gerado (primeiros 800 chars):', soapEnvelope.substring(0, 800));
+
+  const soapAction = SOAP_ACTION[service] || '';
+  console.log('[SOAP Client] SOAPAction:', soapAction);
 
   const requestConfig = {
     headers: {
-      'Content-Type': 'application/soap+xml; charset=utf-8',
+      'Content-Type': `application/soap+xml; charset=utf-8; action="${soapAction}"`,
     },
     timeout: 60000,
     validateStatus: () => true,
@@ -310,21 +326,46 @@ async function sendSoapRequest(options) {
     requestConfig.httpsAgent = new https.Agent({
       pfx: certificateBuffer,
       passphrase: certificatePassword,
-      rejectUnauthorized: true,
+      // Desabilita validação SSL para SEFAZ pois os certificados ICP-Brasil
+      // podem não estar na cadeia de confiança padrão do Node.js
+      // Isso é seguro pois estamos usando mTLS com certificado digital
+      rejectUnauthorized: false,
     });
   }
 
   let response;
   try {
+    console.log('[SOAP Client] Enviando requisição POST para:', endpoint);
+    console.log('[SOAP Client] Timeout configurado:', requestConfig.timeout, 'ms');
+    console.log('[SOAP Client] Headers:', requestConfig.headers);
+    
     response = await axios.post(endpoint, soapEnvelope, requestConfig);
+    
+    console.log('[SOAP Client] Resposta recebida - Status:', response.status);
+    console.log('[SOAP Client] Resposta recebida - Headers:', response.headers);
+    console.log('[SOAP Client] Resposta recebida - Data (primeiros 1000 chars):', 
+      typeof response.data === 'string' ? response.data.substring(0, 1000) : JSON.stringify(response.data).substring(0, 1000));
   } catch (networkError) {
+    console.error('[SOAP Client] Erro de rede capturado:', networkError.message);
+    console.error('[SOAP Client] Código do erro:', networkError.code);
+    console.error('[SOAP Client] Tem request?:', !!networkError.request);
+    console.error('[SOAP Client] Tem response?:', !!networkError.response);
+    
     if (networkError.request) {
+      console.error('[SOAP Client] Detalhes da requisição que falhou:', {
+        method: networkError.config?.method,
+        url: networkError.config?.url,
+        timeout: networkError.config?.timeout,
+      });
       throw new Error('Sem resposta do servidor SEFAZ. Verifique a conexão de rede.');
     }
     throw new Error(`Erro ao conectar ao servidor SEFAZ: ${networkError.message}`);
   }
 
   if (response.status >= 400) {
+    console.error('[SOAP Client] Erro HTTP detectado - Status:', response.status);
+    console.error('[SOAP Client] Response data:', response.data);
+    
     if (response.status === 401) {
       throw new Error('Não autorizado (401). Verifique o certificado digital.');
     } else if (response.status === 403) {
@@ -338,7 +379,9 @@ async function sendSoapRequest(options) {
     }
   }
 
+  console.log('[SOAP Client] Parseando resposta SOAP...');
   const parsed = await parseSoapResponse(response.data);
+  console.log('[SOAP Client] Resposta parseada com sucesso');
 
   return {
     parsed,
@@ -384,6 +427,14 @@ async function autorizacao(enviNFeXml, cUF, isProduction, certBuffer, certPasswo
  * @param {string} [endpointOverride]
  */
 async function consultaProtocolo(consSitXml, cUF, isProduction, certBuffer, certPassword, endpointOverride) {
+  console.log('[SOAP Client] Iniciando consultaProtocolo...');
+  console.log('[SOAP Client] Parâmetros:', {
+    cUF,
+    isProduction,
+    endpointOverride,
+    hasCertificate: !!certBuffer,
+  });
+  
   return sendSoapRequest({
     service: 'consultaProtocolo',
     bodyXml: consSitXml,

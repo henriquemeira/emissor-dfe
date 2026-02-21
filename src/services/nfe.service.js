@@ -154,6 +154,14 @@ async function emitir(data, apiKey) {
  */
 async function consultar(data, apiKey) {
   try {
+    console.log('[NFe Consulta] Iniciando consulta de NF-e...');
+    console.log('[NFe Consulta] Parâmetros recebidos:', {
+      chNFe: data.chNFe,
+      ambiente: data.ambiente,
+      cUF: data.cUF,
+      endpointOverride: data.endpointOverride,
+    });
+
     if (!data.chNFe || data.chNFe.replace(/\D/g, '').length !== 44) {
       throw new Error('Chave de acesso (chNFe) deve ter 44 dígitos');
     }
@@ -162,10 +170,14 @@ async function consultar(data, apiKey) {
     const { certificateBuffer, certificatePassword } = await loadCertificate(apiKey);
     const tpAmb = isProduction ? 1 : 2;
 
+    console.log('[NFe Consulta] Ambiente:', isProduction ? 'PRODUÇÃO' : 'HOMOLOGAÇÃO');
+
     const consultaXml = xmlBuilder.buildConsSitNFe(data.chNFe, tpAmb);
+    console.log('[NFe Consulta] XML de consulta gerado (primeiros 500 chars):', consultaXml.substring(0, 500));
 
     // Derive cUF from chNFe if not explicitly provided
     const cUF = data.cUF || parseInt(data.chNFe.substring(0, 2), 10);
+    console.log('[NFe Consulta] Código UF determinado:', cUF);
 
     const soapResult = await soapClient.consultaProtocolo(
       consultaXml,
@@ -176,6 +188,9 @@ async function consultar(data, apiKey) {
       data.endpointOverride
     );
 
+    console.log('[NFe Consulta] Requisição SOAP concluída com sucesso');
+    console.log('[NFe Consulta] Resultado parseado:', JSON.stringify(soapResult.parsed, null, 2));
+
     const soapPayload = data.includeSoap ? buildSoapPayload(soapResult.soap) : undefined;
 
     return {
@@ -184,6 +199,8 @@ async function consultar(data, apiKey) {
       ...(soapPayload && { soap: soapPayload }),
     };
   } catch (error) {
+    console.error('[NFe Consulta] Erro ao consultar NF-e:', error.message);
+    console.error('[NFe Consulta] Stack trace:', error.stack);
     throw new Error(`Erro ao consultar NF-e: ${error.message}`);
   }
 }

@@ -91,3 +91,14 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/cancelamento-nfe \
     }
   }'
   
+
+
+--------------- NFE
+
+curl -X POST http://localhost:3000/api/v1/nfe/consultar \
+  -H "X-API-Key: 41b3db5a-692a-463e-b20e-fc9a3637e05c" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ambiente": "homologacao",
+    "chNFe": "35240112345678901234550010000000011000000019"
+  }'
