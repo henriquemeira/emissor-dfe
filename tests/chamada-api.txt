@@ -95,6 +95,207 @@ curl -X POST http://localhost:3000/api/v1/nfse/sp/sao-paulo/cancelamento-nfe \
 
 --------------- NFE
 
+
+curl -X POST http://localhost:3000/api/v1/nfe/emitir \
+  -H "X-API-Key: 41b3db5a-692a-463e-b20e-fc9a3637e05c" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "versao": "4.00",
+  "ambiente": "homologacao",
+  "idLote": 1,
+  "indSinc": 1,
+  "nfe": {
+    "ide": {
+      "cUF": 35,
+      "natOp": "REMESSA PARA ARMAZENAGEM",
+      "mod": 55,
+      "serie": 3,
+      "nNF": 2622856,
+      "dhEmi": "2025-11-24T00:00:00-02:00",
+      "dhSaiEnt": "2025-11-24T00:00:00-02:00",
+      "tpNF": 1,
+      "idDest": 1,
+      "cMunFG": 3550308,
+      "tpImp": 1,
+      "tpEmis": 1,
+      "tpAmb": 2,
+      "finNFe": 1,
+      "indFinal": 1,
+      "indPres": 1,
+      "procEmi": 0,
+      "verProc": "GestorNFe_5.2",
+      "cNF": "99911001"
+    },
+    "emit": {
+      "CNPJ": "61182051000176",
+      "xNome": "DISTRIBUIDORA DE PRODUTOS ALIMENTICIOS MARSIL LTDA",
+      "xFant": "MARSIL ATACADISTA SP",
+      "enderEmit": {
+        "xLgr": "GUARANTA",
+        "nro": "580",
+        "xBairro": "PARI",
+        "cMun": 3550308,
+        "xMun": "SAO PAULO",
+        "UF": "SP",
+        "CEP": "03035050",
+        "cPais": 1058,
+        "xPais": "BRASIL",
+        "fone": "1127971000"
+      },
+      "IE": "104463362110",
+      "CRT": 3
+    },
+    "dest": {
+      "CNPJ": "12610534000119",
+      "xNome": "NOTA FISCAL EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL",
+      "enderDest": {
+        "xLgr": "SARG. AER. JAIME REGALO PEREIRA",
+        "nro": "58",
+        "xBairro": "JARDIM CUMBICA",
+        "cMun": 3518800,
+        "xMun": "GUARULHOS",
+        "UF": "SP",
+        "CEP": "07182000",
+        "cPais": 1058,
+        "xPais": "BRASIL",
+        "fone": "01149667355"
+      },
+      "indIEDest": 1,
+      "IE": "336521839115"
+    },
+    "entrega": {
+      "CNPJ": "12610534000119",
+      "xLgr": "SARG. AER. JAIME REGALO PEREIRA",
+      "nro": "58",
+      "xBairro": "JARDIM CUMBICA",
+      "cMun": 3518800,
+      "xMun": "GUARULHOS",
+      "UF": "SP"
+    },
+    "det": [
+      {
+        "nItem": 1,
+        "prod": {
+          "cProd": "1064131",
+          "cEAN": "07891000241363",
+          "xProd": "BISC RECH PASSATEMPO 130GR NESTLE CHOCOLATE CX0070PC",
+          "NCM": "19053100",
+          "CEST": "1705300",
+          "CFOP": "5905",
+          "uCom": "CX",
+          "qCom": 2520.0000,
+          "vUnCom": 125.3000000000,
+          "vProd": 315756.00,
+          "cEANTrib": "07891000241363",
+          "uTrib": "PC",
+          "qTrib": 2520.0000,
+          "vUnTrib": 125.3000000000,
+          "indTot": 1,
+          "xPed": "0"
+        },
+        "imposto": {
+          "vTotTrib": 0.00,
+          "ICMS": {
+            "ICMS40": {
+              "orig": 0,
+              "CST": "40"
+            }
+          },
+          "IPI": {
+            "cEnq": "999",
+            "IPINT": {
+              "CST": "53"
+            }
+          },
+          "PIS": {
+            "PISNT": {
+              "CST": "08"
+            }
+          },
+          "COFINS": {
+            "COFINSNT": {
+              "CST": "08"
+            }
+          }
+        }
+      }
+    ],
+    "total": {
+      "ICMSTot": {
+        "vBC": 0.00,
+        "vICMS": 0.00,
+        "vICMSDeson": 0.00,
+        "vFCP": 0.00,
+        "vBCST": 0.00,
+        "vST": 0.00,
+        "vFCPST": 0.00,
+        "vFCPSTRet": 0.00,
+        "vProd": 315756.00,
+        "vFrete": 0.00,
+        "vSeg": 0.00,
+        "vDesc": 0.00,
+        "vII": 0.00,
+        "vIPI": 0.00,
+        "vIPIDevol": 0.00,
+        "vPIS": 0.00,
+        "vCOFINS": 0.00,
+        "vOutro": 0.00,
+        "vNF": 315756.00,
+        "vTotTrib": 0.00
+      }
+    },
+    "transp": {
+      "modFrete": 1,
+      "transporta": {
+        "xNome": "PROPRIO",
+        "UF": "SP"
+      },
+      "veicTransp": {
+        "placa": "AAA1234",
+        "UF": "SP"
+      },
+      "vol": [
+        {
+          "qVol": 2520,
+          "esp": "VOLUME",
+          "pesoL": 22932.000,
+          "pesoB": 23284.800
+        }
+      ]
+    },
+    "pag": {
+      "detPag": [
+        {
+          "tPag": "90",
+          "vPag": 0.00
+        }
+      ]
+    },
+    "infAdic": {
+      "infCpl": "[Pedido: 9991888][Cliente: 105651][ICMS ST: 0][BASE ST: 0][Obs. Nota: REMESSA PARA ARMAZENAGEM REFERENTE A NF FORNECEDOR ATACADAO 3916985 - OP.147]",
+      "obsCont": [
+        {
+          "xCampo": "IMPRESSORA",
+          "xTexto": "1:DCP7065_01_RECE"
+        },
+        {
+          "xCampo": "DEST_XFANTASIA",
+          "xTexto": "QLL LOGISTICA"
+        },
+        {
+          "xCampo": "ENTREGA_CEP",
+          "xTexto": "7182000"
+        },
+        {
+          "xCampo": "ENTREGA_FONE",
+          "xTexto": "01149667355"
+        }
+      ]
+    }
+  }
+}'
+  
+
 curl -X POST http://localhost:3000/api/v1/nfe/consultar \
   -H "X-API-Key: 41b3db5a-692a-463e-b20e-fc9a3637e05c" \
   -H "Content-Type: application/json" \
