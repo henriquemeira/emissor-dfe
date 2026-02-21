@@ -397,6 +397,7 @@ Para documentação completa sobre NF-e, consulte:
 **Request Body (resumido):**
 ```json
 {
+  "versao": "4.00",
   "ambiente": "homologacao",
   "nfe": {
     "ide": { "cUF": 35, "mod": 55, "serie": 1, "nNF": 1, "dhEmi": "2024-01-15T10:00:00-03:00", "..." },

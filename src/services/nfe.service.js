@@ -62,6 +62,7 @@ async function loadCertificate(apiKey) {
  * Emits a NF-e by converting JSON to XML, signing and submitting to SEFAZ
  *
  * @param {Object} data - Request data
+ * @param {string} data.versao - NF-e version (e.g., '4.00')
  * @param {string} data.ambiente - 'homologacao' | 'producao'
  * @param {Object} data.nfe - NF-e data object (see xml-builder.service.js)
  * @param {string|number} [data.idLote=1] - Lot identifier for enviNFe
@@ -73,6 +74,7 @@ async function loadCertificate(apiKey) {
  */
 async function emitir(data, apiKey) {
   try {
+    const versao = data.versao || '4.00';
     const isProduction = data.ambiente === 'producao';
     const { certificateBuffer, certificatePassword } = await loadCertificate(apiKey);
 
@@ -102,7 +104,7 @@ async function emitir(data, apiKey) {
     nfe.ide.tpAmb = isProduction ? 1 : 2;
 
     // Build the NFe XML
-    const nfeXml = xmlBuilder.buildNFe(nfe, chaveAcesso);
+    const nfeXml = xmlBuilder.buildNFe(nfe, chaveAcesso, versao);
 
     // Sign the NFe XML – signature wraps infNFe by reference
     const signedNFeXml = signatureService.signXml(
@@ -115,7 +117,7 @@ async function emitir(data, apiKey) {
     // Build enviNFe wrapper
     const indSinc = data.indSinc !== undefined ? data.indSinc : 1;
     const idLote = data.idLote || 1;
-    const enviNFeXml = xmlBuilder.buildEnviNFe(signedNFeXml, idLote, indSinc);
+    const enviNFeXml = xmlBuilder.buildEnviNFe(signedNFeXml, idLote, indSinc, versao);
 
     // Submit to SEFAZ
     const cUF = nfe.ide.cUF;

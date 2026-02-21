@@ -493,11 +493,12 @@ function buildPag(pag) {
  *
  * @param {Object} nfe - NF-e data object (mirrors the JSON request body)
  * @param {string} chaveAcesso - 44-digit access key
+ * @param {string} [versao='4.00'] - NF-e version
  * @returns {string} NFe XML string (ready to be signed)
  */
-function buildNFe(nfe, chaveAcesso) {
+function buildNFe(nfe, chaveAcesso, versao = '4.00') {
   let xml = `<NFe xmlns="${NF_E_NAMESPACE}">`;
-  xml += `<infNFe versao="4.00" Id="NFe${esc(chaveAcesso)}">`;
+  xml += `<infNFe versao="${esc(versao)}" Id="NFe${esc(chaveAcesso)}">`;
 
   xml += buildIde(nfe.ide);
   xml += buildEmit(nfe.emit);
@@ -581,11 +582,12 @@ function buildNFe(nfe, chaveAcesso) {
  * @param {string} nfeXml - Signed NFe XML string (without declaration)
  * @param {string|number} idLote - Batch identifier
  * @param {0|1} indSinc - 0=asynchronous, 1=synchronous
+ * @param {string} [versao='4.00'] - NF-e version
  * @returns {string} enviNFe XML string
  */
-function buildEnviNFe(nfeXml, idLote, indSinc = 1) {
+function buildEnviNFe(nfeXml, idLote, indSinc = 1, versao = '4.00') {
   return (
-    `<enviNFe versao="4.00" xmlns="${NF_E_NAMESPACE}">` +
+    `<enviNFe versao="${esc(versao)}" xmlns="${NF_E_NAMESPACE}">` +
     `<idLote>${esc(idLote)}</idLote>` +
     `<indSinc>${esc(indSinc)}</indSinc>` +
     nfeXml +

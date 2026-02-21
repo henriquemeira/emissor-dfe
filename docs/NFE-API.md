@@ -40,6 +40,7 @@ Content-Type: application/json
 **Body:**
 ```json
 {
+  "versao": "4.00",
   "ambiente": "homologacao",
   "idLote": 1,
   "indSinc": 1,
@@ -249,6 +250,7 @@ curl -X POST http://localhost:3000/api/v1/nfe/emitir \
   -H "X-API-Key: sua-api-key-aqui" \
   -H "Content-Type: application/json" \
   -d '{
+    "versao": "4.00",
     "ambiente": "homologacao",
     "idLote": 1,
     "indSinc": 1,

@@ -11,6 +11,7 @@ const nfeService = require('../services/nfe.service');
  *
  * Request body:
  * {
+ *   "versao": "4.00",     // required, NF-e version (currently only 4.00 supported)
  *   "ambiente": "homologacao" | "producao",
  *   "idLote": 1,          // optional, default 1
  *   "indSinc": 1,         // optional, 0=async 1=sync (default 1)
@@ -30,7 +31,7 @@ const nfeService = require('../services/nfe.service');
 async function emitir(req, res, next) {
   try {
     const apiKey = req.apiKey;
-    const { ambiente, nfe, idLote, indSinc, includeSoap, endpointOverride } = req.body;
+    const { versao, ambiente, nfe, idLote, indSinc, includeSoap, endpointOverride } = req.body;
 
     if (!ambiente) {
       return res.status(400).json({
