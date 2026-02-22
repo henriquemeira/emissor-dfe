@@ -36,6 +36,236 @@ function fmt(value, decimals = 2) {
 // Internal section builders – each returns an XML fragment (no declaration)
 // ---------------------------------------------------------------------------
 
+/**
+ * Builds TDif group (Diferimento)
+ * @param {Object} gDif
+ * @returns {string}
+ */
+function buildTDif(gDif) {
+  if (!gDif) return '';
+  let xml = '<gDif>';
+  xml += `<pDif>${fmt(gDif.pDif, 4)}</pDif>`;
+  xml += `<vDif>${fmt(gDif.vDif)}</vDif>`;
+  xml += '</gDif>';
+  return xml;
+}
+
+/**
+ * Builds TDevTrib group (Devolução de Tributo)
+ * @param {Object} gDevTrib
+ * @returns {string}
+ */
+function buildTDevTrib(gDevTrib) {
+  if (!gDevTrib) return '';
+  let xml = '<gDevTrib>';
+  xml += `<vDevTrib>${fmt(gDevTrib.vDevTrib)}</vDevTrib>`;
+  xml += '</gDevTrib>';
+  return xml;
+}
+
+/**
+ * Builds TRed group (Redução de Alíquota)
+ * @param {Object} gRed
+ * @returns {string}
+ */
+function buildTRed(gRed) {
+  if (!gRed) return '';
+  let xml = '<gRed>';
+  xml += `<pRedAliq>${fmt(gRed.pRedAliq, 4)}</pRedAliq>`;
+  xml += `<pAliqEfet>${fmt(gRed.pAliqEfet, 4)}</pAliqEfet>`;
+  xml += '</gRed>';
+  return xml;
+}
+
+/**
+ * Builds TCredPres group (Crédito Presumido)
+ * @param {Object} gCredPres
+ * @returns {string}
+ */
+function buildTCredPres(gCredPres) {
+  if (!gCredPres) return '';
+  let xml = '<gCredPres>';
+  xml += `<pCredPres>${fmt(gCredPres.pCredPres, 4)}</pCredPres>`;
+  if (gCredPres.vCredPres !== undefined) {
+    xml += `<vCredPres>${fmt(gCredPres.vCredPres)}</vCredPres>`;
+  } else if (gCredPres.vCredPresCondSus !== undefined) {
+    xml += `<vCredPresCondSus>${fmt(gCredPres.vCredPresCondSus)}</vCredPresCondSus>`;
+  }
+  xml += '</gCredPres>';
+  return xml;
+}
+
+/**
+ * Builds TTribRegular group (Tributação Regular)
+ * @param {Object} gTribRegular
+ * @returns {string}
+ */
+function buildTTribRegular(gTribRegular) {
+  if (!gTribRegular) return '';
+  let xml = '<gTribRegular>';
+  xml += `<CSTReg>${esc(gTribRegular.CSTReg)}</CSTReg>`;
+  xml += `<cClassTribReg>${esc(gTribRegular.cClassTribReg)}</cClassTribReg>`;
+  xml += `<pAliqEfetRegIBSUF>${fmt(gTribRegular.pAliqEfetRegIBSUF, 4)}</pAliqEfetRegIBSUF>`;
+  xml += `<vTribRegIBSUF>${fmt(gTribRegular.vTribRegIBSUF)}</vTribRegIBSUF>`;
+  xml += `<pAliqEfetRegIBSMun>${fmt(gTribRegular.pAliqEfetRegIBSMun, 4)}</pAliqEfetRegIBSMun>`;
+  xml += `<vTribRegIBSMun>${fmt(gTribRegular.vTribRegIBSMun)}</vTribRegIBSMun>`;
+  xml += `<pAliqEfetRegCBS>${fmt(gTribRegular.pAliqEfetRegCBS, 4)}</pAliqEfetRegCBS>`;
+  xml += `<vTribRegCBS>${fmt(gTribRegular.vTribRegCBS)}</vTribRegCBS>`;
+  xml += '</gTribRegular>';
+  return xml;
+}
+
+/**
+ * Builds TMonofasia group (Tributação Monofásica)
+ * @param {Object} gIBSCBSMono
+ * @returns {string}
+ */
+function buildTMonofasia(gIBSCBSMono) {
+  if (!gIBSCBSMono) return '';
+  let xml = '<gIBSCBSMono>';
+
+  // gMonoPadrao
+  if (gIBSCBSMono.gMonoPadrao) {
+    const g = gIBSCBSMono.gMonoPadrao;
+    xml += '<gMonoPadrao>';
+    xml += `<qBCMono>${fmt(g.qBCMono, 4)}</qBCMono>`;
+    xml += `<adRemIBS>${fmt(g.adRemIBS, 4)}</adRemIBS>`;
+    xml += `<adRemCBS>${fmt(g.adRemCBS, 4)}</adRemCBS>`;
+    xml += `<vIBSMono>${fmt(g.vIBSMono)}</vIBSMono>`;
+    xml += `<vCBSMono>${fmt(g.vCBSMono)}</vCBSMono>`;
+    xml += '</gMonoPadrao>';
+  }
+
+  // gMonoReten
+  if (gIBSCBSMono.gMonoReten) {
+    const g = gIBSCBSMono.gMonoReten;
+    xml += '<gMonoReten>';
+    xml += `<qBCMonoReten>${fmt(g.qBCMonoReten, 4)}</qBCMonoReten>`;
+    xml += `<adRemIBSReten>${fmt(g.adRemIBSReten, 4)}</adRemIBSReten>`;
+    xml += `<vIBSMonoReten>${fmt(g.vIBSMonoReten)}</vIBSMonoReten>`;
+    xml += `<adRemCBSReten>${fmt(g.adRemCBSReten, 4)}</adRemCBSReten>`;
+    xml += `<vCBSMonoReten>${fmt(g.vCBSMonoReten)}</vCBSMonoReten>`;
+    xml += '</gMonoReten>';
+  }
+
+  // gMonoRet
+  if (gIBSCBSMono.gMonoRet) {
+    const g = gIBSCBSMono.gMonoRet;
+    xml += '<gMonoRet>';
+    xml += `<qBCMonoRet>${fmt(g.qBCMonoRet, 4)}</qBCMonoRet>`;
+    xml += `<adRemIBSRet>${fmt(g.adRemIBSRet, 4)}</adRemIBSRet>`;
+    xml += `<vIBSMonoRet>${fmt(g.vIBSMonoRet)}</vIBSMonoRet>`;
+    xml += `<adRemCBSRet>${fmt(g.adRemCBSRet, 4)}</adRemCBSRet>`;
+    xml += `<vCBSMonoRet>${fmt(g.vCBSMonoRet)}</vCBSMonoRet>`;
+    xml += '</gMonoRet>';
+  }
+
+  // gMonoDif
+  if (gIBSCBSMono.gMonoDif) {
+    const g = gIBSCBSMono.gMonoDif;
+    xml += '<gMonoDif>';
+    xml += `<pDifIBS>${fmt(g.pDifIBS, 4)}</pDifIBS>`;
+    xml += `<vIBSMonoDif>${fmt(g.vIBSMonoDif)}</vIBSMonoDif>`;
+    xml += `<pDifCBS>${fmt(g.pDifCBS, 4)}</pDifCBS>`;
+    xml += `<vCBSMonoDif>${fmt(g.vCBSMonoDif)}</vCBSMonoDif>`;
+    xml += '</gMonoDif>';
+  }
+
+  // Campos totais obrigatórios
+  xml += `<vTotIBSMonoItem>${fmt(gIBSCBSMono.vTotIBSMonoItem)}</vTotIBSMonoItem>`;
+  xml += `<vTotCBSMonoItem>${fmt(gIBSCBSMono.vTotCBSMonoItem)}</vTotCBSMonoItem>`;
+  xml += '</gIBSCBSMono>';
+  return xml;
+}
+
+/**
+ * Builds TCIBS group (CBS/IBS Completo)
+ * @param {Object} gIBSCBS
+ * @returns {string}
+ */
+function buildTCIBS(gIBSCBS) {
+  if (!gIBSCBS) return '';
+  let xml = '<gIBSCBS>';
+
+  // vBC obrigatório
+  xml += `<vBC>${fmt(gIBSCBS.vBC)}</vBC>`;
+
+  // gIBSUF
+  if (gIBSCBS.gIBSUF) {
+    const g = gIBSCBS.gIBSUF;
+    xml += '<gIBSUF>';
+    xml += `<pIBSUF>${fmt(g.pIBSUF, 4)}</pIBSUF>`;
+    xml += buildTDif(g.gDif);
+    xml += buildTDevTrib(g.gDevTrib);
+    xml += buildTRed(g.gRed);
+    xml += `<vIBSUF>${fmt(g.vIBSUF)}</vIBSUF>`;
+    xml += '</gIBSUF>';
+  }
+
+  // gIBSMun
+  if (gIBSCBS.gIBSMun) {
+    const g = gIBSCBS.gIBSMun;
+    xml += '<gIBSMun>';
+    xml += `<pIBSMun>${fmt(g.pIBSMun, 4)}</pIBSMun>`;
+    xml += buildTDif(g.gDif);
+    xml += buildTDevTrib(g.gDevTrib);
+    xml += buildTRed(g.gRed);
+    xml += `<vIBSMun>${fmt(g.vIBSMun)}</vIBSMun>`;
+    xml += '</gIBSMun>';
+  }
+
+  // vIBS obrigatório
+  xml += `<vIBS>${fmt(gIBSCBS.vIBS)}</vIBS>`;
+
+  // gCBS
+  if (gIBSCBS.gCBS) {
+    const g = gIBSCBS.gCBS;
+    xml += '<gCBS>';
+    xml += `<pCBS>${fmt(g.pCBS, 4)}</pCBS>`;
+    xml += buildTDif(g.gDif);
+    xml += buildTDevTrib(g.gDevTrib);
+    xml += buildTRed(g.gRed);
+    xml += `<vCBS>${fmt(g.vCBS)}</vCBS>`;
+    xml += '</gCBS>';
+  }
+
+  // gTribRegular (opcional)
+  xml += buildTTribRegular(gIBSCBS.gTribRegular);
+
+  // gTribCompraGov (opcional, não implementado por enquanto)
+  // xml += buildTTribCompraGov(gIBSCBS.gTribCompraGov);
+
+  xml += '</gIBSCBS>';
+  return xml;
+}
+
+/**
+ * Builds TEstornoCred group (Estorno de Crédito)
+ * @param {Object} gEstornoCred
+ * @returns {string}
+ */
+function buildTEstornoCred(gEstornoCred) {
+  if (!gEstornoCred) return '';
+  let xml = '<gEstornoCred>';
+  xml += `<vIBSEstCred>${fmt(gEstornoCred.vIBSEstCred)}</vIBSEstCred>`;
+  xml += `<vCBSEstCred>${fmt(gEstornoCred.vCBSEstCred)}</vCBSEstCred>`;
+  xml += '</gEstornoCred>';
+  return xml;
+}
+
+/**
+ * Builds TCredPresIBSZFM group (Crédito Presumido IBS ZFM)
+ * @param {Object} gCredPresIBSZFM
+ * @returns {string}
+ */
+function buildTCredPresIBSZFM(gCredPresIBSZFM) {
+  if (!gCredPresIBSZFM) return '';
+  let xml = '<gCredPresIBSZFM>';
+  xml += `<tpCredPresIBSZFM>${esc(gCredPresIBSZFM.tpCredPresIBSZFM)}</tpCredPresIBSZFM>`;
+  xml += '</gCredPresIBSZFM>';
+  return xml;
+}
+
 function buildIde(ide) {
   let xml = '<ide>';
   xml += `<cUF>${esc(ide.cUF)}</cUF>`;
@@ -315,6 +545,45 @@ function buildImposto(imposto) {
     xml += '</COFINSST>';
   }
 
+  // IBS/CBS Tributação
+  if (imposto.IBSCBS) {
+    xml += '<IBSCBS>';
+    const ibs = imposto.IBSCBS;
+    xml += `<CST>${esc(ibs.CST)}</CST>`;
+    xml += `<cClassTrib>${esc(ibs.cClassTrib)}</cClassTrib>`;
+    if (ibs.indDoacao !== undefined) xml += `<indDoacao>${esc(ibs.indDoacao)}</indDoacao>`;
+    
+    // Choice: gIBSCBS, gIBSCBSMono, gTransfCred, gAjusteCompet
+    if (ibs.gIBSCBS) {
+      xml += buildTCIBS(ibs.gIBSCBS);
+    } else if (ibs.gIBSCBSMono) {
+      xml += buildTMonofasia(ibs.gIBSCBSMono);
+    }
+    // gTransfCred e gAjusteCompet podem ser implementados no futuro
+    
+    // gEstornoCred (opcional)
+    if (ibs.gEstornoCred) {
+      xml += buildTEstornoCred(ibs.gEstornoCred);
+    }
+    
+    // Choice: gCredPresOper ou gCredPresIBSZFM
+    if (ibs.gCredPresOper) {
+      xml += '<gCredPresOper>';
+      const gcp = ibs.gCredPresOper;
+      xml += buildTCredPres(gcp);
+      xml += '</gCredPresOper>';
+    } else if (ibs.gCredPresIBSZFM) {
+      xml += buildTCredPresIBSZFM(ibs.gCredPresIBSZFM);
+    }
+    
+    xml += '</IBSCBS>';
+  }
+
+  // tpCredPresIBSZFM (no detalhe, opcional)
+  if (imposto.tpCredPresIBSZFM !== undefined) {
+    xml += `<tpCredPresIBSZFM>${esc(imposto.tpCredPresIBSZFM)}</tpCredPresIBSZFM>`;
+  }
+
   xml += '</imposto>';
   return xml;
 }
@@ -387,6 +656,86 @@ function buildTotal(total) {
     if (t.cRegTrib !== undefined)    xml += `<cRegTrib>${esc(t.cRegTrib)}</cRegTrib>`;
     xml += '</ISSQNtot>';
   }
+
+  // IBSCBSTot - Totais de IBS/CBS
+  if (total.IBSCBSTot) {
+    const t = total.IBSCBSTot;
+    xml += '<IBSCBSTot>';
+    
+    xml += `<vBCIBSCBS>${fmt(t.vBCIBSCBS)}</vBCIBSCBS>`;
+
+    // gIBS (opcional)
+    if (t.gIBS) {
+      const gIBS = t.gIBS;
+      xml += '<gIBS>';
+      
+      // gIBSUF (opcional)
+      if (gIBS.gIBSUF) {
+        const g = gIBS.gIBSUF;
+        xml += '<gIBSUF>';
+        xml += `<vDif>${fmt(g.vDif)}</vDif>`;
+        xml += `<vDevTrib>${fmt(g.vDevTrib)}</vDevTrib>`;
+        xml += `<vIBSUF>${fmt(g.vIBSUF)}</vIBSUF>`;
+        xml += '</gIBSUF>';
+      }
+      
+      // gIBSMun (opcional)
+      if (gIBS.gIBSMun) {
+        const g = gIBS.gIBSMun;
+        xml += '<gIBSMun>';
+        xml += `<vDif>${fmt(g.vDif)}</vDif>`;
+        xml += `<vDevTrib>${fmt(g.vDevTrib)}</vDevTrib>`;
+        xml += `<vIBSMun>${fmt(g.vIBSMun)}</vIBSMun>`;
+        xml += '</gIBSMun>';
+      }
+      
+      xml += `<vIBS>${fmt(gIBS.vIBS)}</vIBS>`;
+      
+      if (gIBS.vCredPres !== undefined) xml += `<vCredPres>${fmt(gIBS.vCredPres)}</vCredPres>`;
+      if (gIBS.vCredPresCondSus !== undefined) xml += `<vCredPresCondSus>${fmt(gIBS.vCredPresCondSus)}</vCredPresCondSus>`;
+      
+      xml += '</gIBS>';
+    }
+
+    // gCBS (opcional)
+    if (t.gCBS) {
+      const gCBS = t.gCBS;
+      xml += '<gCBS>';
+      xml += `<vDif>${fmt(gCBS.vDif)}</vDif>`;
+      xml += `<vDevTrib>${fmt(gCBS.vDevTrib)}</vDevTrib>`;
+      xml += `<vCBS>${fmt(gCBS.vCBS)}</vCBS>`;
+      
+      if (gCBS.vCredPres !== undefined) xml += `<vCredPres>${fmt(gCBS.vCredPres)}</vCredPres>`;
+      if (gCBS.vCredPresCondSus !== undefined) xml += `<vCredPresCondSus>${fmt(gCBS.vCredPresCondSus)}</vCredPresCondSus>`;
+      
+      xml += '</gCBS>';
+    }
+
+    // gMono (opcional - Monofasia)
+    if (t.gMono) {
+      const gMono = t.gMono;
+      xml += '<gMono>';
+      xml += `<vIBSMono>${fmt(gMono.vIBSMono)}</vIBSMono>`;
+      xml += `<vCBSMono>${fmt(gMono.vCBSMono)}</vCBSMono>`;
+      xml += `<vIBSMonoReten>${fmt(gMono.vIBSMonoReten)}</vIBSMonoReten>`;
+      xml += `<vCBSMonoReten>${fmt(gMono.vCBSMonoReten)}</vCBSMonoReten>`;
+      xml += `<vIBSMonoRet>${fmt(gMono.vIBSMonoRet)}</vIBSMonoRet>`;
+      xml += `<vCBSMonoRet>${fmt(gMono.vCBSMonoRet)}</vCBSMonoRet>`;
+      xml += '</gMono>';
+    }
+
+    // gEstornoCred (opcional)
+    if (t.gEstornoCred) {
+      const gEst = t.gEstornoCred;
+      xml += '<gEstornoCred>';
+      xml += `<vIBSEstCred>${fmt(gEst.vIBSEstCred)}</vIBSEstCred>`;
+      xml += `<vCBSEstCred>${fmt(gEst.vCBSEstCred)}</vCBSEstCred>`;
+      xml += '</gEstornoCred>';
+    }
+
+    xml += '</IBSCBSTot>';
+  }
+
   xml += '</total>';
   return xml;
 }
